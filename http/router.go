@@ -13,38 +13,35 @@ func loadRouter() (router *gin.Engine) {
 	router.POST("healthy", controller.Healthy)
 	//swagger
 	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // register swagger
-	//登录模块
-	auth := router.Group("/auth")
+	// 企业模块
+	enterprise := router.Group("/enterprises")
 	{
-
-		/**
-		1. 登录态校验  token-> code 0:uid,app_id  code 1: 过期   code 2:wrong token code 3:token missing
-		2. 注册： username,pswd,phone(带验证码) -> token
-		3. 手机登录： phone#, veriCode -> token
-		*/
-		auth.GET("/check", controller.Check)                     //校验登录态
-		auth.POST("/signin/username", controller.SignInUsername) //用户名登录
-		auth.POST("/signin/sms", controller.SignInSMS)           //手机登录
-		auth.POST("/signup/username", controller.SignUpUsername) //用户名注册
-		auth.POST("/signup/sms", controller.SignUpSMS)           //手机注册
-		// flow.Use(providers.ServiceOrder())
+		enterprise.GET("")         //获取企业信息
+		enterprise.PUT("/:en_id")  //更新企业信息
+		enterprise.POST("/create") //新建企业 用于O端(zy要求)
+		//TODO:单独写状态接口因为查询状态较为频繁，减少网络请求数据量. 初期可以不使用
+		enterprise.GET("/state/:en_id") //获取企业状态
+		enterprise.PUT("/state/:en_id") //更新企业状态
 	}
-	//账号模块
-	account := router.Group("/account")
+	//机构模块
+	group := router.Group("/groups")
 	{
-		auth.GET("/assets", controller.GetAssets)               // 根据uid，查询拥有的企业，机构
-		account.PUT("/username/:uid", controller.BindUsername)  //绑定用户名
-		account.PUT("/phone/:uid", controller.BindPhone)        //绑定手机号
-		account.PUT("/lock_unlock/:uid", controller.LockUnlock) //冻结，解冻用户
-		auth.PUT("/pswd/:uid", controller.UpdatePswd)           //修改密码
-		//TODO: 明天想重置密码怎么弄
-		// auth.POST("/reset_pswd") //重置密码 需带一个special token
-		//查询角色
+		enterprise.GET("")                                  //获取企业信息
+		group.GET("/enterprises/all", controller.GetAssets) //
 	}
-	//sms验证码模块
-	sms := router.Group("sms")
+	//审核模块
+	audit := router.Group("audits")
 	{
-		sms.POST("/ask_code", controller.AskCode) //向sms服务申请验证码
+		audit.POST("")        //提交审核 （涉及图片上传）
+		audit.GET("")         //搜索审核,分页
+		audit.POST("confirm") //审核通过，打回. 同步修改企业状态
+	}
+	//评估模块
+	valuate := router.Group("valuate")
+	{
+		valuate.POST("")       //提交估值
+		valuate.GET("")        //获取估值结果
+		valuate.POST("export") //导出 同步异步？
 	}
 	return
 }
