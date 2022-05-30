@@ -20,3 +20,6 @@ func Start() (err error, shutdown func()) {
 func run(ctx context.Context) {
 
 }
+func Error(obj interface{}) {
+
+}
