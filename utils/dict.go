@@ -6,6 +6,7 @@ var filterMap = []string{
 	"register_capital",
 	"estimate_value",
 	"industry",
+	"app_id",
 }
 var sortMap = []string{
 	"register_capital",

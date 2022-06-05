@@ -41,7 +41,7 @@ type GormSlaveConfig struct {
 }
 
 const (
-	dataSourceNameFormat = "%s:%s@tcp(%s:%s)/%s"
+	dataSourceNameFormat = "%s:%s@tcp(%s:%s)/%s?charset=utf8mb3&parseTime=True"
 	driverName           = "mysql"
 )
 

@@ -7,16 +7,16 @@ import (
 	"company_service/utils"
 )
 
+//
 func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, err error) {
 	//转化filter 和 sort为sql
-	en := []model.Enterprise{}
 	tx := providers.DBenterprise.
-		Debug().
 		Table(model.GetEnterpriseTable())
-	//全文搜索
+	//TODO:全文搜索还有bug
 	for _, v := range textFilters {
 		p := utils.ParseFilter(v.Type)
 		for _, v1 := range v.Values {
+			//这了用or连接
 			tx.Where(p, v1)
 		}
 	}
@@ -45,12 +45,71 @@ func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter
 		orderClause = orderClause[:len(orderClause)-1]
 		tx.Order(orderClause)
 	}
-	//Find
-	tx.Offset((page - 1) * pageSize).Limit(pageSize).Find(&res)
+	//page>0启用分页
+	if page > 0 {
+		tx.Offset((page - 1) * pageSize).Limit(pageSize)
+	}
+	tx.Find(&res)
 	err = tx.Error
-	res = en
+	return
+}
+func GetEnterpriseByAppIDs(appIDs []string) (res []model.Enterprise, err error) {
+	tx := providers.DBenterprise.
+		Table(model.GetEnterpriseTable())
+	tx.Where("app_id IN ?", appIDs).Find(&res)
+	err = tx.Error
+	return
+}
+func GetEnterpriseByKey(key string, val interface{}) (res *model.Enterprise, err error) {
+	res = &model.Enterprise{}
+	tx := providers.DBenterprise.
+		Table(model.GetEnterpriseTable())
+	tx.Where(key, val).First(&res)
+	err = tx.Error
 	return
 }
 func Total(rangeFilters []request.RangeFilter, textFilters []request.RangeFilter, sort []request.Sort) (total int, err error) {
+	return
+}
+
+func Create(appID, uid, pid string, data model.EnterpriseMuttable) (err error) {
+	en := createEnterPriseEntityByMuttables(data)
+	en.AppID = appID
+	en.UID = uid
+	en.ParentID = pid
+	tx := providers.DBenterprise.
+		Table(model.GetEnterpriseTable())
+	tx.Create(en)
+	err = tx.Error
+	return
+}
+
+func createEnterPriseEntityByMuttables(data model.EnterpriseMuttable) (res model.Enterprise) {
+	res.EnterpriseMuttable = data
+	return
+}
+
+func Update(where map[string]interface{}, data model.EnterpriseMuttable) (affectedRows int64, err error) {
+	en := createEnterPriseEntityByMuttables(data)
+	tx := providers.DBenterprise.
+		Table(model.GetEnterpriseTable())
+	for k, v := range where {
+		tx.Where(k, v)
+	}
+	tx.Updates(en)
+	affectedRows = tx.RowsAffected
+	err = tx.Error
+	return
+}
+
+func SuperUpdate(where map[string]interface{}, data model.Enterprise) (affectedRows int64, err error) {
+	tx := providers.DBenterprise.
+		Table(model.GetEnterpriseTable())
+	for k, v := range where {
+		tx.Where(k, v)
+	}
+	tx.Updates(data)
+	affectedRows = tx.RowsAffected
+	err = tx.Error
 	return
 }
