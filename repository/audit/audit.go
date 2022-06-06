@@ -1,9 +1,14 @@
 package audit
 
 import (
+	"bytes"
 	"company_service/model"
 	"company_service/providers"
 	"company_service/repository"
+	"encoding/json"
+	"fmt"
+	"io"
+	"mime/multipart"
 )
 
 func Create(auditID, appID string, appType uint8, formData string, requestedAt string) (err error) {
@@ -91,5 +96,44 @@ func Total(appIDs []string) (total int64, err error) {
 	}
 	tx.Count(&total)
 	err = tx.Error
+	return
+}
+
+func UploadImages(appID string, imgs []*multipart.FileHeader) (paths map[string]string, err error) {
+	type RspUpload struct {
+		Code int               `json:"code"`
+		Msg  string            `json:"msg"`
+		Data map[string]string `json:"data"`
+	}
+	client := providers.HttpClientStatic
+
+	//创建文件对象
+	bodyBuffer := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuffer)
+	for _, file := range imgs {
+		fileWriter, _ := bodyWriter.CreateFormFile("imgs", file.Filename)
+		f, errOpenFile := file.Open()
+		if errOpenFile != nil {
+			err = errOpenFile
+			return
+		}
+		io.Copy(fileWriter, f)
+		f.Close()
+	}
+
+	contentType := bodyWriter.FormDataContentType()
+	bodyWriter.WriteField("app_id", appID)
+	bodyWriter.Close()
+	rsp, err := client.Post(client.BaseURL+"/img/", contentType, bodyBuffer)
+	if err != nil {
+		return
+	}
+	result := RspUpload{}
+	json.NewDecoder(rsp.Body).Decode(&result)
+	if result.Code != 0 {
+		err = fmt.Errorf("调用业务侧逻辑出错 code:%d msg:%v", result.Code, result.Msg)
+		return
+	}
+	paths = result.Data
 	return
 }

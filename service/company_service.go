@@ -30,14 +30,17 @@ func Create(uid string, pid string, data model.EnterpriseMuttable) (buzCode buz_
 		if err != nil {
 			msg = err.Error()
 			if msg == "该用户已经注册过公司" {
+				err = nil
 				buzCode = buz_code.CODE_ENTERPRISE_CREATE_FAILED
 			}
 			if utils.IsMysqlDupKeyErr(err) {
+				err = nil
 				buzCode = buz_code.CODE_ENTERPRISE_CREATE_FAILED
 				msg = "唯一键冲突"
 			}
 			return
 		}
+		buzCode = buz_code.CODE_OK
 		msg = "ok"
 		tx.Commit()
 		return

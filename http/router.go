@@ -19,8 +19,7 @@ func loadRouter() (router *gin.Engine) {
 	// 企业模块
 	groupEnterprise := router.Group("/enterprise")
 	{
-		groupEnterprise.POST("/search", enterprise.Search) //企业信息搜索接口
-		// enterprise.GET(":en_id")                      //根据企业id拿信息
+		groupEnterprise.POST("/search", enterprise.Search)        //企业信息搜索接口
 		groupEnterprise.GET("/by_app_ids", enterprise.QueryByIDs) //根据企业id拿信息,批量
 		groupEnterprise.POST("", enterprise.Create)               //新建企业 用于O端(zy要求)
 		groupEnterprise.PUT(":app_id", enterprise.Update)         //更新企业信息

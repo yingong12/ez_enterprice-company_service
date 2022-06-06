@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm"
 )
 
@@ -27,6 +28,15 @@ func BindJSON(ctx *gin.Context, req interface{}) (err error) {
 }
 func BindQuery(ctx *gin.Context, form interface{}) (err error) {
 	if err = ctx.BindQuery(form); err != nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": buz_code.CODE_INVALID_ARGS,
+			"msg":  fmt.Sprintf("invalid params %s\n", err.Error()),
+		})
+	}
+	return
+}
+func BindMultiForm(ctx *gin.Context, form interface{}) (err error) {
+	if err = ctx.BindWith(form, binding.FormMultipart); err != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": buz_code.CODE_INVALID_ARGS,
 			"msg":  fmt.Sprintf("invalid params %s\n", err.Error()),
@@ -74,10 +84,10 @@ func Search(ctx *gin.Context) {
 func Create(ctx *gin.Context) {
 	req := audit.Create{}
 	//bind args
-	if err := BindJSON(ctx, &req); err != nil {
+	if err := BindMultiForm(ctx, &req); err != nil {
 		return
 	}
-	err := service.Create(req.AppID, req.AppType, req.FormData)
+	err := service.Create(req.AppID, req.AppType, req.FormData, req.IdentidyImg, req.LicenseImg)
 	if utils.IsMysqlDupKeyErr(err) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": buz_code.CODE_SERVER_ERROR,

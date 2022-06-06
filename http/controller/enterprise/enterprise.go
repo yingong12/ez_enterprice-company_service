@@ -61,7 +61,7 @@ func Create(ctx *gin.Context) {
 		return
 	}
 	buzCode, msg, err := service.Create(req.UID, req.ParentID, req.Data)
-	if err != nil && buzCode != buz_code.CODE_ENTERPRISE_CREATE_FAILED {
+	if err != nil {
 		logger.Error(err)
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": buz_code.CODE_SERVER_ERROR,

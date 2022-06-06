@@ -6,13 +6,34 @@ import (
 	enterprise "company_service/repository"
 	repository "company_service/repository/audit"
 	"company_service/utils"
+	"encoding/json"
+	"mime/multipart"
 )
 
-func Create(appID string, appType uint8, formData string) (err error) {
+func Create(appID string, appType uint8, formData string, idImg []*multipart.FileHeader, licenseImg *multipart.FileHeader) (err error) {
 	//获取唯一audit_id
 	auditID := utils.GenerateAuditID()
 	now := utils.GetNowFMT()
-	return repository.Create(auditID, appID, appType, formData, now)
+	idImg[0].Filename = "id_0.jpg"
+	idImg[1].Filename = "id_1.jpg"
+	licenseImg.Filename = "license.jpg"
+	imgs := []*multipart.FileHeader{idImg[0], idImg[1], licenseImg}
+	paths, err := repository.UploadImages(appID, imgs)
+	if err != nil {
+		return
+	}
+	data := map[string]interface{}{}
+	var j []byte
+	//TODO: 重塑formData 加入图片信息
+	func() {
+		err = json.Unmarshal([]byte(formData), &data)
+		data["identity_img"] = paths["id_0.jpg"] + "," + paths["id_1.jpg"]
+		data["license_img"] = paths["license.jpg"]
+		j, err = json.Marshal(data)
+
+	}()
+	//写db
+	return repository.Create(auditID, appID, appType, (string)(j), now)
 }
 
 func Search(appName, registrationNumber, appID string, stateArr []int, page, pageSize int) (res []model.Audit, total int64, err error) {

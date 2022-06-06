@@ -8,3 +8,6 @@ var DBenterprise *library.GormDB
 
 //估值队列生产者
 var ValProducer *library.SyncProducer
+
+//static 服务
+var HttpClientStatic *library.HttpClient
