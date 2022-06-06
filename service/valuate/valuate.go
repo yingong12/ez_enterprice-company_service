@@ -1,10 +1,10 @@
 package valuate
 
 import (
-	"company_service/logger"
 	"company_service/model"
 	repository "company_service/repository/valuate"
 	"company_service/utils"
+	"log"
 )
 
 func Create(data model.ValuateMuttable) (err error) {
@@ -24,7 +24,7 @@ func Create(data model.ValuateMuttable) (err error) {
 		return
 	}
 	//log
-	logger.Info("message produced.  partition:%d offset:%d", partition, offset)
+	log.Printf("message produced.  partition:%d offset:%d", partition, offset)
 	return
 }
 func Search(appID string, page, pageSize int) (res []model.Valuate, err error) {

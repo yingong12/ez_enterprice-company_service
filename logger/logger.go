@@ -24,4 +24,5 @@ func Error(obj interface{}) {
 
 }
 func Info(obj ...interface{}) {
+	log.Println(obj...)
 }

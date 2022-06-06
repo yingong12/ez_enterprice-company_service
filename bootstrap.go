@@ -78,7 +78,7 @@ func bootStrap() (err error) {
 	//kafka
 	pdcrs := []*library.ProducerConfig{
 		{
-			Brokers:  "127.0.0.1:9092",
+			Brokers:  env.GetStringVal("KAFKA_BROKERS_VALUATE"),
 			Receiver: &providers.ValProducer,
 		},
 	}
