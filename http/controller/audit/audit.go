@@ -109,9 +109,24 @@ func UpdateState(ctx *gin.Context) {
 		return
 	}
 	req := audit.UpdateState{}
-	if err := BindQuery(ctx, &req); err != nil {
+	if err := BindJSON(ctx, &req); err != nil {
 		return
 	}
-	service.UpdateState(auditID, req.State)
+	rowCount, err := service.UpdateState(auditID, req.AppID, req.State)
+	if err != nil {
+		logger.Error(err)
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": buz_code.CODE_SERVER_ERROR,
+			"msg":  "server error",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": buz_code.CODE_OK,
+		"msg":  "ok",
+		"data": map[string]int64{
+			"affected_rows": rowCount,
+		},
+	})
 	return
 }

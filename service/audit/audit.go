@@ -42,29 +42,27 @@ func Search(appName, registrationNumber, appID string, stateArr []int, page, pag
 
 }
 
-func UpdateState(auditID string, state int) (rowCount int64, err error) {
-	where := map[string]interface{}{"audit_id": auditID}
+func UpdateState(auditID, appID string, state int) (rowCount int64, err error) {
 	data := model.Enterprise{}
 	data.State = int8(state)
 	tx := providers.DBenterprise.Begin()
 	defer func() {
-		if err != nil {
+		//rollback
+		if err != nil || rowCount <= 0 {
 			tx.Rollback()
 		}
 		tx.Commit()
 	}()
 	/*
-		1.查auditID 找到appID.
-		2.更新auditID state
-		3.更新enterprise表
+		此处带入appid是为了校验该appid是否是库里存的appid
 	*/
-	//键入tx
-	//更新enterprise表
-	rowCount, err = enterprise.SuperUpdate(where, data)
-	if err != nil {
+	//更新audit表
+	rowCount, err = repository.UpdateState(auditID, appID, state)
+	if rowCount <= 0 || err != nil {
 		return
 	}
-	//更新audit表
-	rowCount, err = repository.UpdateState(auditID, state)
+	//更新enterprise表
+	where := map[string]interface{}{"app_id": appID}
+	rowCount, err = enterprise.SuperUpdate(where, data)
 	return
 }

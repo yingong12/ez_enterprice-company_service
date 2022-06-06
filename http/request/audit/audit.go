@@ -16,5 +16,6 @@ type Search struct {
 
 }
 type UpdateState struct {
-	State int `form:"state"` //
+	AppID string `json:"app_id"`
+	State int    `json:"state"` //
 }
