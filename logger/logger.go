@@ -23,3 +23,5 @@ func run(ctx context.Context) {
 func Error(obj interface{}) {
 
 }
+func Info(obj ...interface{}) {
+}

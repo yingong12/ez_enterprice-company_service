@@ -37,3 +37,7 @@ func GenerateAppID() string {
 func GenerateAuditID() string {
 	return genRandomString("audit_", 10, charset)
 }
+
+func GenerateValuateID() string {
+	return genRandomString("val_", 16, charset)
+}

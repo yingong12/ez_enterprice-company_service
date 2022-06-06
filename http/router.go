@@ -44,10 +44,11 @@ func loadRouter() (router *gin.Engine) {
 	// //评估模块
 	groupValuate := router.Group("valuate")
 	{
-		groupValuate.POST("", value.Create)       //提交估值
-		groupValuate.GET("", value.Search)        //获取估值结果
-		groupValuate.GET(":id", value.Search)     //根据id获取估值结果
-		groupValuate.POST("export", value.Export) //导出 同步异步？
+		groupValuate.POST("", value.Create) //提交估值
+		groupValuate.GET("", value.Search)  //获取估值结果
+		// groupValuate.GET(":id", value.Search)     //根据id获取估值结果
+		// groupValuate.POST("export", value.Export) //导出 同步异步？
 	}
+
 	return
 }

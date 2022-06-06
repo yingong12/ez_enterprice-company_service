@@ -71,7 +71,22 @@ func bootStrap() (err error) {
 			return e
 		}
 	}
-
+	//kafka
+	pdcrs := []*library.ProducerConfig{
+		{
+			Brokers:  "127.0.0.1:9092",
+			Receiver: &providers.ValProducer,
+		},
+	}
+	for _, cfg := range pdcrs {
+		if cfg.Receiver == nil {
+			return fmt.Errorf("config receiver cannot be nil")
+		}
+		*cfg.Receiver, err = library.NewSyncProducer(cfg)
+		if err != nil {
+			return
+		}
+	}
 	//http server
 	err, shutdownHttpServer := http.Start()
 	if err != nil {
