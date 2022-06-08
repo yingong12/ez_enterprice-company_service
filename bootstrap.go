@@ -21,7 +21,9 @@ func bootStrap() (err error) {
 	//加载环境变量
 
 	filePath := ".env"
+	serverPort := 8687
 	flag.StringVar(&filePath, "c", ".env", "配置文件")
+	flag.IntVar(&serverPort, "p", 8687, "http端口")
 	flag.Parse()
 	if err = godotenv.Load(filePath); err != nil {
 		return
@@ -107,7 +109,7 @@ func bootStrap() (err error) {
 		(**cfg.Receiver).BaseURL = cfg.BaseURL
 	}
 	//http server
-	err, shutdownHttpServer := http.Start()
+	err, shutdownHttpServer := http.Start(serverPort)
 	if err != nil {
 		return
 	}
