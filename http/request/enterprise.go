@@ -4,7 +4,7 @@ import "company_service/model"
 
 type Search struct {
 	Sort         []Sort        `json:"sort"`          //排序
-	TextFilters  []TextFilter  `json:"textFilters"`   //全文搜索
+	TextFilters  []TextFilter  `json:"text_filters"`  //全文搜索
 	RangeFilters []RangeFilter `json:"range_filters"` //范围搜索
 	Page         int           `json:"page"`          //页码
 	PageSize     int           `json:"page_size"`     //分页大小

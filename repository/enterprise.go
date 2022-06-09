@@ -12,7 +12,7 @@ func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter
 	//转化filter 和 sort为sql
 	tx := providers.DBenterprise.
 		Table(model.GetEnterpriseTable())
-	//TODO:全文搜索还有bug
+	//TODO:需支持全文搜索
 	for _, v := range textFilters {
 		p := utils.ParseFilter(v.Type)
 		for _, v1 := range v.Values {
