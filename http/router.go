@@ -19,12 +19,12 @@ func loadRouter() (router *gin.Engine) {
 	// 企业模块
 	groupEnterprise := router.Group("/enterprise")
 	{
-		groupEnterprise.POST("/search", enterprise.Search)            //企业信息搜索接口
-		groupEnterprise.GET("/by_app_ids", enterprise.QueryByIDs)     //根据企业id拿信息,批量
-		groupEnterprise.POST("", enterprise.Create)                   //新建企业 用于O端(zy要求)
-		groupEnterprise.PUT(":app_id", enterprise.Update)             //更新企业信息
-		groupEnterprise.GET("industry", enterprise.GetIndustryByCode) //        根据industry id查询行业节点以及他的所有儿子
-		groupEnterprise.GET("district", enterprise.GetDistrictByCode) //            根据地区代码查询地区节点以及他的所有儿子
+		groupEnterprise.POST("/search", enterprise.Search)                         //企业信息搜索接口
+		groupEnterprise.GET("/by_app_ids", enterprise.QueryByIDs)                  //根据企业id拿信息,批量
+		groupEnterprise.POST("", enterprise.Create)                                //新建企业 用于O端(zy要求)
+		groupEnterprise.PUT(":app_id", enterprise.Update)                          //更新企业信息
+		groupEnterprise.GET("get_industry_children", enterprise.GetIndustryByCode) //        根据industry id查询行业节点以及他的所有儿子
+		groupEnterprise.GET("get_district_children", enterprise.GetDistrictByCode) //            根据地区代码查询地区节点以及他的所有儿子
 		//TODO:单独写状态接口因为查询状态较为频繁，减少网络请求数据量. 初期可以不使用
 		// enterprise.GET("/state/:en_id") //获取企业状态
 		// enterprise.PUT("/state/:en_id") //更新企业状态

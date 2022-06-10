@@ -4,9 +4,12 @@ import (
 	"company_service/http/buz_code"
 	"company_service/http/request"
 	"company_service/http/response"
+	"company_service/model"
+	"company_service/providers"
 	"company_service/service"
 	"company_service/utils"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -135,8 +138,89 @@ func QueryByIDs(ctx *gin.Context) {
 func GetIndustryByCode(ctx *gin.Context) {
 	//DFS
 	//根据ID拿节点以及儿子
+	code := ctx.Query("code")
+	node := dfsIndustry(&providers.IndustryDict, code)
+	if node == nil {
+		return
+	}
+	res := []*model.IndustryDict{}
+	for _, v := range node.Children {
+		if v.Children == nil {
+			v.IsLeaf = true
+		} else {
+			v.Children = nil
+		}
+		res = append(res, v)
+	}
+	data := model.IndustryDict{
+		Children: res,
+		Code:     node.Code,
+		Label:    node.Label,
+		IsLeaf:   len(res) == 0,
+	}
+	ctx.JSON(http.StatusOK, gin.H{"code": buz_code.CODE_OK, "msg": "ok", "data": data})
 }
 
 func GetDistrictByCode(ctx *gin.Context) {
 	//DFS
+	code := ctx.Query("code")
+	log.Println(code)
+	node := dfsDistrict(&providers.DisrictDict, code)
+	if node == nil {
+		return
+	}
+	children := []*model.District{}
+	for _, v := range node.Children {
+		//直辖市或者到最低层了
+		if v.Children == nil || v.Children[0].Code == v.Code {
+			v.IsLeaf = true
+		}
+		//TODO:这里会影响原有数据
+		v.Children = nil
+		children = append(children, v)
+	}
+	isLeaf := len(children) == 0
+	if !isLeaf && children[0].Code == node.Code {
+		isLeaf = true
+		children = nil
+	}
+
+	data := model.District{
+		Children: children,
+		Code:     node.Code,
+		Label:    node.Label,
+		Level:    node.Level,
+		IsLeaf:   isLeaf,
+	}
+	ctx.JSON(http.StatusOK, gin.H{"code": buz_code.CODE_OK, "msg": "ok", "data": data})
+}
+
+//找出该节点和所有儿子
+func dfsDistrict(root *model.District, target string) *model.District {
+	if root == nil {
+		return nil
+	}
+	if root.Code == target {
+		return root
+	}
+	for _, d := range root.Children {
+		if cur := dfsDistrict(d, target); cur != nil {
+			return cur
+		}
+	}
+	return nil
+}
+func dfsIndustry(root *model.IndustryDict, target string) *model.IndustryDict {
+	if root == nil {
+		return nil
+	}
+	if root.Code == target {
+		return root
+	}
+	for _, d := range root.Children {
+		if cur := dfsIndustry(d, target); cur != nil {
+			return cur
+		}
+	}
+	return nil
 }

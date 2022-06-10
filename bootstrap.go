@@ -18,7 +18,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-//解析硬编码经纬度数据
+//加载硬编码字典
 func loadStatics(fpaths []string, names []string) (err error) {
 	for k, path := range fpaths {
 		//相对路径

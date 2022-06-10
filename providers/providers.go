@@ -15,5 +15,5 @@ var ValProducer *library.SyncProducer
 //static 服务
 var HttpClientStatic *library.HttpClient
 
-var IndustryDict []model.IndustryDict
-var DisrictDict []model.District
+var IndustryDict model.IndustryDict
+var DisrictDict model.District
