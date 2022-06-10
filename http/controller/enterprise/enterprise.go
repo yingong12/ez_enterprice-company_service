@@ -145,12 +145,13 @@ func GetIndustryByCode(ctx *gin.Context) {
 	}
 	res := []*model.IndustryDict{}
 	for _, v := range node.Children {
-		if v.Children == nil {
-			v.IsLeaf = true
-		} else {
-			v.Children = nil
+		item := &model.IndustryDict{
+			Code:     v.Code,
+			Label:    v.Label,
+			IsLeaf:   v.Children == nil,
+			Children: nil,
 		}
-		res = append(res, v)
+		res = append(res, item)
 	}
 	data := model.IndustryDict{
 		Children: res,
@@ -171,26 +172,23 @@ func GetDistrictByCode(ctx *gin.Context) {
 	}
 	children := []*model.District{}
 	for _, v := range node.Children {
-		//直辖市或者到最低层了
-		if v.Children == nil || v.Children[0].Code == v.Code {
-			v.IsLeaf = true
+		//删除children
+		//这里克隆一份防止改动原有全局数据
+		item := &model.District{
+			Code:     v.Code,
+			Label:    v.Label,
+			Level:    v.Level,
+			IsLeaf:   v.Children == nil,
+			Children: nil,
 		}
-		//TODO:这里会影响原有数据
-		v.Children = nil
-		children = append(children, v)
+		children = append(children, item)
 	}
-	isLeaf := len(children) == 0
-	if !isLeaf && children[0].Code == node.Code {
-		isLeaf = true
-		children = nil
-	}
-
 	data := model.District{
 		Children: children,
 		Code:     node.Code,
 		Label:    node.Label,
 		Level:    node.Level,
-		IsLeaf:   isLeaf,
+		IsLeaf:   children == nil,
 	}
 	ctx.JSON(http.StatusOK, gin.H{"code": buz_code.CODE_OK, "msg": "ok", "data": data})
 }
