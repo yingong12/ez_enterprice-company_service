@@ -78,7 +78,8 @@ func bootStrap() (err error) {
 		return
 	}
 	//加载static资源
-	if err = loadStatics([]string{"static/industry.json", "static/district.json"}, []string{"industry", "district"}); err != nil {
+	staticPath := env.GetStringVal("STATIC_PATH")
+	if err = loadStatics([]string{staticPath + "/industry.json", staticPath + "/district.json"}, []string{"industry", "district"}); err != nil {
 		return
 	}
 	//加载Redis连接池
