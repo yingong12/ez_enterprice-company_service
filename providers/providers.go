@@ -1,6 +1,9 @@
 package providers
 
-import "company_service/library"
+import (
+	"company_service/library"
+	"company_service/model"
+)
 
 var RedisClient *library.RedisClient
 
@@ -11,3 +14,6 @@ var ValProducer *library.SyncProducer
 
 //static 服务
 var HttpClientStatic *library.HttpClient
+
+var IndustryDict []model.IndustryDict
+var DisrictDict []model.District

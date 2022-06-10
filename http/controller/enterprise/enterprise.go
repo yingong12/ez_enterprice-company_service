@@ -131,3 +131,12 @@ func QueryByIDs(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"code": buz_code.CODE_OK, "msg": "ok", "data": list})
 }
+
+func GetIndustryByCode(ctx *gin.Context) {
+	//DFS
+	//根据ID拿节点以及儿子
+}
+
+func GetDistrictByCode(ctx *gin.Context) {
+	//DFS
+}

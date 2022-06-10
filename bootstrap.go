@@ -6,6 +6,8 @@ import (
 	"company_service/library/env"
 	"company_service/logger"
 	"company_service/providers"
+	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -15,6 +17,47 @@ import (
 
 	"github.com/joho/godotenv"
 )
+
+//解析硬编码经纬度数据
+func loadStatics(fpaths []string, names []string) (err error) {
+	for k, path := range fpaths {
+		//相对路径
+		if path[0] != '/' {
+			wd, errWD := os.Getwd()
+			if errWD != nil {
+				return
+			}
+			path = wd + "/" + path
+		}
+		//绝对路径
+		fd, errF := os.Open(path)
+		if errF != nil {
+			err = errF
+			return
+		}
+		//如果是文件夹直接报错
+		if fs, fsErr := fd.Stat(); fsErr != nil || fs.IsDir() {
+			err = errors.New("open" + path + " failed")
+			return
+		}
+		//decode文件内容
+		switch names[k] {
+		case "industry":
+			err = json.NewDecoder(fd).Decode(&providers.IndustryDict)
+			if err != nil {
+				return err
+			}
+		case "district":
+			err = json.NewDecoder(fd).Decode(&providers.DisrictDict)
+			if err != nil {
+				return err
+			}
+		default:
+		}
+		fd.Close()
+	}
+	return
+}
 
 //bootstrap providers,以及routines
 func bootStrap() (err error) {
@@ -32,6 +75,10 @@ func bootStrap() (err error) {
 
 	err, shutdownLogger := logger.Start()
 	if err != nil {
+		return
+	}
+	//加载static资源
+	if err = loadStatics([]string{"static/industry.json", "static/district.json"}, []string{"industry", "district"}); err != nil {
 		return
 	}
 	//加载Redis连接池
