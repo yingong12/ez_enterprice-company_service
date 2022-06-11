@@ -8,4 +8,5 @@ const (
 	CODE_SERVER_ERROR                         //服务器内部错误 2
 	CODE_ENTERPRISE_CREATE_FAILED             //新建企业失败 3
 	CODE_ENTERPRISE_UPDATE_FAILED             //更新企业失败 4
+	CODE_NODE_NOT_FOUND                       //节点不存在 5
 )

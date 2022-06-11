@@ -141,6 +141,7 @@ func GetIndustryByCode(ctx *gin.Context) {
 	code := ctx.Query("code")
 	node := dfsIndustry(&providers.IndustryDict, code)
 	if node == nil {
+		ctx.JSON(http.StatusOK, gin.H{"code": buz_code.CODE_NODE_NOT_FOUND, "msg": "节点不存在", "data": nil})
 		return
 	}
 	res := []*model.IndustryDict{}
@@ -168,6 +169,7 @@ func GetDistrictByCode(ctx *gin.Context) {
 	log.Println(code)
 	node := dfsDistrict(&providers.DisrictDict, code)
 	if node == nil {
+		ctx.JSON(http.StatusOK, gin.H{"code": buz_code.CODE_NODE_NOT_FOUND, "msg": "节点不存在", "data": nil})
 		return
 	}
 	children := []*model.District{}
@@ -195,6 +197,7 @@ func GetDistrictByCode(ctx *gin.Context) {
 
 //找出该节点和所有儿子
 func dfsDistrict(root *model.District, target string) *model.District {
+	fmt.Println(root.Code)
 	if root == nil {
 		return nil
 	}
