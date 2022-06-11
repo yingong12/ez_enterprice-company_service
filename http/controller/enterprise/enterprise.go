@@ -188,7 +188,7 @@ func GetDistrictByCode(ctx *gin.Context) {
 		Code:     node.Code,
 		Label:    node.Label,
 		Level:    node.Level,
-		IsLeaf:   children == nil,
+		IsLeaf:   len(children) == 0,
 	}
 	ctx.JSON(http.StatusOK, gin.H{"code": buz_code.CODE_OK, "msg": "ok", "data": data})
 }
