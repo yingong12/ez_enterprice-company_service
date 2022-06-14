@@ -5,6 +5,7 @@ import (
 	"company_service/model"
 	"company_service/providers"
 	"company_service/utils"
+	"fmt"
 )
 
 //
@@ -17,7 +18,8 @@ func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter
 		p := utils.ParseFilter(v.Type)
 		for _, v1 := range v.Values {
 			//这了用or连接
-			tx.Where(p, v1)
+			q := fmt.Sprintf("%s like ?", p)
+			tx.Where(q, "%"+v1+"%")
 		}
 	}
 	//范围搜索
