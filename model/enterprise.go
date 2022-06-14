@@ -5,6 +5,10 @@ import "time"
 type Enterprise struct {
 	EnterpriseMuttable
 	EnterpriseImmutable
+	EnterpriseBuzFields
+}
+type EnterpriseBuzFields struct {
+	Lable string `json:"lable"`
 }
 
 //业务侧可create和update的字段

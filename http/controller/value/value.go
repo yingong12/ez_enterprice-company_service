@@ -2,8 +2,8 @@ package value
 
 import (
 	"company_service/http/buz_code"
+	"company_service/http/controller"
 	"company_service/http/request/valuate"
-	"company_service/logger"
 	service "company_service/service/valuate"
 	"fmt"
 	"net/http"
@@ -31,46 +31,34 @@ func BindQuery(ctx *gin.Context, form interface{}) (err error) {
 }
 
 //搜索接口
-func Search(ctx *gin.Context) {
+func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := valuate.Search{}
-	if err := BindQuery(ctx, &req); err != nil {
+	if err = BindQuery(ctx, &req); err != nil {
 		return
 	}
 	list, err := service.Search(req.AppID, req.Page, req.PageSize)
 	if err != nil {
-		logger.Error(err)
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_SERVER_ERROR,
-			"msg":  "server error",
-		})
+		res.Code = buz_code.CODE_SERVER_ERROR
+		res.Msg = "server error"
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"code": buz_code.CODE_OK,
-		"msg":  "ok",
-		"list": list,
-	})
+	res.Data = list
+	return
 }
 
 //提交估值
-func Create(ctx *gin.Context) {
+func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := valuate.Create{}
-	if err := BindJSON(ctx, &req); err != nil {
+	if err = BindJSON(ctx, &req); err != nil {
 		return
 	}
-	err := service.Create(req.ValuateMuttable)
+	err = service.Create(req.ValuateMuttable)
 	if err != nil {
-		logger.Error(err)
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_SERVER_ERROR,
-			"msg":  "server error",
-		})
+		res.Code = buz_code.CODE_SERVER_ERROR
+		res.Msg = "server error"
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"code": buz_code.CODE_OK,
-		"msg":  "ok",
-	})
+	return
 }
 
 func Export(ctx *gin.Context) {}

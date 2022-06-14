@@ -1,14 +1,11 @@
 package audit
 
-import "mime/multipart"
-
 type Create struct {
-	AppID       string                  `form:"app_id"`
-	AppType     uint8                   `form:"app_type"`
-	FormData    string                  `form:"form_data"`                     //审核表单信息
-	IdentidyImg []*multipart.FileHeader `form:"rep_id_img" binding:"required"` //身份证
-	LicenseImg  *multipart.FileHeader   `form:"license" binding:"required"`    //营业执照
+	AppID    string `form:"app_id"`
+	AppType  uint8  `form:"app_type"`
+	FormData string `form:"form_data"` //审核表单信息
 }
+
 type Search struct {
 	States             string `json:"states" form:"states"` //状态
 	Page               int    `json:"page" form:"page"`

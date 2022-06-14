@@ -2,13 +2,11 @@ package audit
 
 import (
 	"company_service/http/buz_code"
+	"company_service/http/controller"
 	"company_service/http/request/audit"
 	"company_service/http/response"
-	"company_service/logger"
 	service "company_service/service/audit"
 	"company_service/utils"
-	"fmt"
-	"net/http"
 	"strconv"
 	"strings"
 
@@ -18,35 +16,22 @@ import (
 )
 
 func BindJSON(ctx *gin.Context, req interface{}) (err error) {
-	if err = ctx.BindJSON(req); err != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_INVALID_ARGS,
-			"msg":  fmt.Sprintf("invalid params %s\n", err.Error()),
-		})
-	}
+	ctx.BindJSON(req)
 	return
 }
 func BindQuery(ctx *gin.Context, form interface{}) (err error) {
-	if err = ctx.BindQuery(form); err != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_INVALID_ARGS,
-			"msg":  fmt.Sprintf("invalid params %s\n", err.Error()),
-		})
-	}
+	ctx.BindQuery(form)
 	return
 }
 func BindMultiForm(ctx *gin.Context, form interface{}) (err error) {
-	if err = ctx.BindWith(form, binding.FormMultipart); err != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_INVALID_ARGS,
-			"msg":  fmt.Sprintf("invalid params %s\n", err.Error()),
-		})
-	}
+	ctx.BindWith(form, binding.FormMultipart)
 	return
 }
-func Search(ctx *gin.Context) {
+func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := audit.Search{}
-	if err := BindQuery(ctx, &req); err != nil {
+	if err = BindQuery(ctx, &req); err != nil {
+		res.Code = buz_code.CODE_INVALID_ARGS
+		res.Msg = err.Error()
 		return
 	}
 	stateArr := []int{}
@@ -54,12 +39,11 @@ func Search(ctx *gin.Context) {
 		//bind states
 		stateStrArr := strings.Split(req.States, ",")
 		for _, state := range stateStrArr {
-			stateInt, err := strconv.Atoi(state)
-			if err != nil {
-				ctx.JSON(http.StatusOK, gin.H{
-					"code": buz_code.CODE_INVALID_ARGS,
-					"msg":  fmt.Sprintf("invalid params %s\n", err.Error()),
-				})
+			stateInt, errInt := strconv.Atoi(state)
+			if errInt != nil {
+				err = errInt
+				res.Code = buz_code.CODE_INVALID_ARGS
+				res.Msg = err.Error()
 				return
 			}
 			stateArr = append(stateArr, stateInt)
@@ -68,75 +52,59 @@ func Search(ctx *gin.Context) {
 
 	list, count, err := service.Search(req.AppName, req.RegistrationNumber, req.AppID, stateArr, req.Page, req.PageSize)
 	if err != nil && err != gorm.ErrRecordNotFound {
-		logger.Error(err)
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_SERVER_ERROR,
-			"msg":  "server error",
-		})
+		res.Code = buz_code.CODE_SERVER_ERROR
+		res.Msg = "server error"
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"code": buz_code.CODE_OK, "msg": "ok", "data": response.AuditSearch{
+	res.Data = response.AuditSearch{
 		Total: count,
 		List:  list,
-	}})
+	}
 	return
 }
-func Create(ctx *gin.Context) {
+func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := audit.Create{}
 	//bind args
-	if err := BindMultiForm(ctx, &req); err != nil {
+	if err = BindMultiForm(ctx, &req); err != nil {
+		res.Code = buz_code.CODE_INVALID_ARGS
+		res.Msg = err.Error()
 		return
 	}
-	err := service.Create(req.AppID, req.AppType, req.FormData, req.IdentidyImg, req.LicenseImg)
+	err = service.Create(req.AppID, req.AppType, req.FormData)
 	if utils.IsMysqlDupKeyErr(err) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_SERVER_ERROR,
-			"msg":  "唯一键冲突 " + err.Error(),
-		})
+		res.Code = buz_code.CODE_INVALID_ARGS
+		res.Msg = "唯一键冲突"
 		return
 	}
 	if err != nil {
-		logger.Error(err)
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_SERVER_ERROR,
-			"msg":  "server error",
-		})
-		return
+		res.Code = buz_code.CODE_SERVER_ERROR
+		res.Msg = "server error"
 	}
-	ctx.JSON(http.StatusOK, gin.H{"code": buz_code.CODE_OK, "msg": "ok", "data": ""})
+	return
 }
 
 //O端审核
-func UpdateState(ctx *gin.Context) {
+func UpdateState(ctx *gin.Context) (res controller.STDResponse, err error) {
 	// 1.更新审核表
 	// 2.更新enterprise表
 	auditID, ok := ctx.Params.Get("audit_id")
 	if !ok {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_INVALID_ARGS,
-			"msg":  fmt.Sprintf("invalid params. No app_id provided"),
-		})
+		res.Code = buz_code.CODE_INVALID_ARGS
+		res.Msg = "invalid params. No app_id provided"
 		return
 	}
 	req := audit.UpdateState{}
-	if err := BindJSON(ctx, &req); err != nil {
+	if err = BindJSON(ctx, &req); err != nil {
 		return
 	}
 	rowCount, err := service.UpdateState(auditID, req.AppID, req.State)
 	if err != nil {
-		logger.Error(err)
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": buz_code.CODE_SERVER_ERROR,
-			"msg":  "server error",
-		})
+		res.Code = buz_code.CODE_SERVER_ERROR
+		res.Msg = "server error"
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{
-		"code": buz_code.CODE_OK,
-		"msg":  "ok",
-		"data": map[string]int64{
-			"affected_rows": rowCount,
-		},
-	})
+	res.Data = map[string]int64{
+		"affected_rows": rowCount,
+	}
 	return
 }

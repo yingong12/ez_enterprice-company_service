@@ -17,6 +17,7 @@ func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter
 	if err != nil {
 		return
 	}
+	//遍历，拿到行业中文名字
 	// total, err = repository.Total(rangeFilters, textFilters, sort)
 	return
 }
