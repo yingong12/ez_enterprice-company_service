@@ -97,7 +97,7 @@ func UpdateState(ctx *gin.Context) (res controller.STDResponse, err error) {
 	if err = BindJSON(ctx, &req); err != nil {
 		return
 	}
-	rowCount, err := service.UpdateState(auditID, req.AppID, req.State)
+	rowCount, err := service.UpdateState(auditID, req.AppID, req.State, req.Comment)
 	if err != nil {
 		res.Code = buz_code.CODE_SERVER_ERROR
 		res.Msg = "server error"

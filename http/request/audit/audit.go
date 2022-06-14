@@ -17,6 +17,7 @@ type Search struct {
 
 }
 type UpdateState struct {
-	AppID string `json:"app_id"`
-	State int    `json:"state"` //
+	AppID   string `json:"app_id"`
+	State   int    `json:"state"`   //
+	Comment string `json:"comment"` //管理员备注
 }

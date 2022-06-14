@@ -43,7 +43,7 @@ func Search(appName, registrationNumber, appID string, stateArr []int, page, pag
 
 }
 
-func UpdateState(auditID, appID string, state int) (rowCount int64, err error) {
+func UpdateState(auditID, appID string, state int, comment string) (rowCount int64, err error) {
 	data := model.Enterprise{}
 	data.State = int8(state)
 	tx := providers.DBenterprise.Begin()
@@ -58,7 +58,7 @@ func UpdateState(auditID, appID string, state int) (rowCount int64, err error) {
 		此处带入appid是为了校验该appid是否是库里存的appid
 	*/
 	//更新audit表
-	rowCount, err = repository.UpdateState(auditID, appID, state)
+	rowCount, err = repository.UpdateState(auditID, appID, comment, state)
 	if rowCount <= 0 || err != nil {
 		return
 	}

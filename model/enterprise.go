@@ -55,6 +55,7 @@ type Audit struct {
 	FormData     string    `gorm:"column:form_data" json:"form_data"`
 	State        uint8     `gorm:"column:state" json:"state"`
 	RequestedAt  string    `gorm:"column:requested_at" json:"requested_at"`
+	Comment      string    `gorm:"column:comment" json:"comment"`                                 //不通过理由等。
 	CreatedAt    time.Time `gorm:"column:created_at;default:CURRENT_TIMESTAMP;NOT NULL" json:"-"` // 创建时间
 	UpdatedAt    time.Time `gorm:"column:updated_at;default:CURRENT_TIMESTAMP;NOT NULL" json:"-"` // 更新时间
 	CreatedAtFmt string    `gorm:"-" json:"created_at"`                                           //返回给业务侧

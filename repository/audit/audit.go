@@ -53,11 +53,15 @@ func Search(appIDs []string, stateArr []int, page, pageSize int) (res []model.Au
 	return
 }
 
-func UpdateState(auditID, appID string, state int) (rowCount int64, err error) {
+func UpdateState(auditID, appID, comment string, state int) (rowCount int64, err error) {
 	tx := providers.DBenterprise.Table(model.GetAuditTable())
 	tx.Where("audit_id", auditID)
 	tx.Where("app_id", appID)
 	tx.Update("state", state)
+	//默认值不更新
+	if comment != "" {
+		tx.Update("comment", comment)
+	}
 	rowCount = tx.RowsAffected
 	err = tx.Error
 	return
