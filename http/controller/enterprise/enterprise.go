@@ -36,6 +36,18 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 		res.Msg = "server error"
 		return
 	}
+	//添加label, 行业，地区
+	for k := range list {
+		v := &list[k]
+		codeInd := v.Industry
+		codeDist := v.District
+		if node := dfsDistrict(&providers.DisrictDict, codeDist); node != nil {
+			v.LabelDistrict = node.Label
+		}
+		if node := dfsIndustry(&providers.IndustryDict, codeInd); node != nil {
+			v.LabelIndustry = node.Label
+		}
+	}
 	data := response.Search{
 		List:  list,
 		Total: total,
