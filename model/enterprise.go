@@ -20,16 +20,16 @@ type EnterpriseMuttable struct {
 	LegalRepresentative      string `gorm:"column:legal_representative" json:"legal_representative"`
 	RegistrationAddress      string `gorm:"column:registration_address" json:"registration_address"`
 	Industry                 string `gorm:"column:industry" json:"industry"`
+	LicenseImg               string `gorm:"column:license_img" json:"license_img"`
 	LegalRepresentativeIDImg string `gorm:"column:legal_representative_id_img" json:"legal_representative_id_img"`
 	BusinessScope            string `gorm:"column:business_scope" json:"business_scope"`
 	Introduction             string `gorm:"column:introduction" json:"introduction"`
-	License_img              string `gorm:"column:license_img" json:"license_img"`
-	ShareHolder              string `gorm:"column:share_holder" json:"share_holder"`
-	ShareHolderProportion    string `gorm:"column:share_holder_proportion" json:"share_holder_proportion"`
+	ShareHolders             string `gorm:"column:share_holder_info" json:"share_holder_info"`
 	RegisterCapital          int    `gorm:"column:register_capital" json:"register_capital"`
 	CompanyType              int    `gorm:"column:company_type" json:"company_type"`
 	EstimateValue            int    `gorm:"column:estimate_value" json:"estimate_value"`
 	Stage                    int8   `gorm:"column:stage" json:"stage"`
+	ShareHoldersJSON         string `gorm:"-" json:"shar_holders_json"`
 }
 
 //不允许业务update的字段
