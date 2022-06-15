@@ -12,13 +12,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, total int, err error) {
-	res, err = repository.Search(rangeFilters, textFilters, sort, page, pageSize)
+func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, total int64, err error) {
+	tx := providers.DBenterprise.Begin().Table(model.GetEnterpriseTable())
+	defer tx.Commit()
+	res, err = repository.Search(tx, rangeFilters, textFilters, sort, page, pageSize)
 	if err != nil {
 		return
 	}
-	//遍历，拿到行业中文名字
-	// total, err = repository.Total(rangeFilters, textFilters, sort)
+	total, err = repository.Total(tx, rangeFilters, textFilters, sort)
 	return
 }
 

@@ -6,13 +6,13 @@ import (
 	"company_service/providers"
 	"company_service/utils"
 	"fmt"
+
+	"gorm.io/gorm"
 )
 
 //
-func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, err error) {
-	//转化filter 和 sort为sql
-	tx := providers.DBenterprise.
-		Table(model.GetEnterpriseTable())
+func Search(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, err error) {
+
 	//TODO:需支持全文搜索
 	for _, v := range textFilters {
 		p := utils.ParseFilter(v.Type)
@@ -70,7 +70,42 @@ func GetEnterpriseByKey(key string, val interface{}) (res *model.Enterprise, err
 	err = tx.Error
 	return
 }
-func Total(rangeFilters []request.RangeFilter, textFilters []request.RangeFilter, sort []request.Sort) (total int, err error) {
+func Total(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort) (total int64, err error) {
+	for _, v := range textFilters {
+		p := utils.ParseFilter(v.Type)
+		for _, v1 := range v.Values {
+			//这了用or连接
+			q := fmt.Sprintf("%s like ?", p)
+			tx.Where(q, "%"+v1+"%")
+		}
+	}
+	//范围搜索
+	for _, v := range rangeFilters {
+		p := utils.ParseFilter(v.Type)
+		if v.Gte >= 0 {
+			tx.Where(p+" >= ? ", v.Gte)
+		}
+		if v.Gte <= 0 {
+			tx.Where(p+" <= ? ", v.Lte)
+		}
+	}
+	//排序
+	if len(sort) > 0 {
+		//排序
+		orderClause := ""
+		for _, v := range sort {
+			orderClause += utils.ParseSortColumn(int(v.Type))
+			if v.Type == 1 {
+				orderClause += " DESC"
+			}
+			orderClause += " ,"
+		}
+		//去掉最后一个AND
+		orderClause = orderClause[:len(orderClause)-1]
+		tx.Order(orderClause)
+	}
+	tx.Count(&total)
+	err = tx.Error
 	return
 }
 
