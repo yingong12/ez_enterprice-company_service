@@ -15,14 +15,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//GetProductInfo 企业搜索
-//@Summary	企业搜索
-//@Description	企业搜索
-//@Tags	常规接口
-//@Produce	json
-//@Param	xxx query request.ProductInfoRequest  false "字段注解"
-//@Success 200 {object} response.ProductInfo
-//@Router	/data_analysis/common/get_product_info [post]
 func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := request.Search{}
 	if err = ctx.BindJSON(&req); err != nil {
@@ -56,6 +48,13 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	return
 }
 
+//GetProductInfo 企业新建
+//@Summary	企业新建
+//@Description	企业新建
+//@Tags	企业
+//@Produce	json
+//@Param	xxx body request.Create  false "字段注解"
+//@Router	/enterprise [POST]
 func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := request.Create{}
 	if err = ctx.BindJSON(&req); err != nil {

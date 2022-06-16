@@ -1,6 +1,7 @@
 package http
 
 import (
+	_ "company_service/docs" //引入swagger
 	"company_service/http/controller"
 	"company_service/http/controller/audit"
 	"company_service/http/controller/enterprise"
@@ -8,6 +9,8 @@ import (
 	"company_service/http/middleware"
 
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func loadRouter() (router *gin.Engine) {
@@ -17,6 +20,8 @@ func loadRouter() (router *gin.Engine) {
 	router.Use(middleware.ControllerErrorLogger())
 	//routes
 	router.POST("health", controller.Health)
+	//swagger
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler)) // register swagger
 	//swagger
 	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // register swagger
 	// 企业模块

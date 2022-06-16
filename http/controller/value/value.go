@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
+	_ "company_service/model"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,7 +32,14 @@ func BindQuery(ctx *gin.Context, form interface{}) (err error) {
 	return
 }
 
-//搜索接口
+//GetProductInfo 估值搜索
+//@Summary	估值搜索
+//@Description	估值搜索
+//@Tags 估值
+//@Produce	json
+//@Param	xxx query valuate.Search  false "字段注解"
+//@Success 200 {object} []model.Valuate
+//@Router	/valuate/search [get]
 func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := valuate.Search{}
 	if err = BindQuery(ctx, &req); err != nil {

@@ -3,11 +3,11 @@ package request
 import "company_service/model"
 
 type Search struct {
-	Sort         []Sort        `json:"sort"`          //排序
-	TextFilters  []TextFilter  `json:"text_filters"`  //全文搜索
-	RangeFilters []RangeFilter `json:"range_filters"` //范围搜索
-	Page         int           `json:"page"`          //页码
-	PageSize     int           `json:"page_size"`     //分页大小
+	Sort         []Sort        `json:"sort"`          /*排序*/
+	TextFilters  []TextFilter  `json:"text_filters"`  /*全文搜索*/
+	RangeFilters []RangeFilter `json:"range_filters"` /*范围搜索*/
+	Page         int           `json:"page"`          /*页码*/
+	PageSize     int           `json:"page_size"`     /*分页大小*/
 }
 
 type RangeFilter struct {
@@ -28,8 +28,8 @@ type Sort struct {
 
 //
 type Create struct {
-	UID      string                   `json:"uid"`       //用户id
-	ParentID string                   `json:"parent_id"` //机构id 非必填
+	UID      string                   `json:"uid"`       /*用户id*/
+	ParentID string                   `json:"parent_id"` /*机构id 非必填*/
 	Data     model.EnterpriseMuttable //字段
 }
 

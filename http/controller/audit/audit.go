@@ -27,6 +27,14 @@ func BindMultiForm(ctx *gin.Context, form interface{}) (err error) {
 	ctx.BindWith(form, binding.FormMultipart)
 	return
 }
+
+//GetProductInfo 审核搜索
+//@Summary	审核搜索
+//@Description	审核搜索
+//@Tags	审核
+//@Produce	json
+//@Param	xxx body audit.Search  false "字段注解"
+//@Router	/audit [GET]
 func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := audit.Search{}
 	if err = BindQuery(ctx, &req); err != nil {
@@ -62,6 +70,14 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	}
 	return
 }
+
+//GetProductInfo 审核提交
+//@Summary	审核提交
+//@Description	审核提交
+//@Tags	审核
+//@Produce	json
+//@Param	xxx body audit.Create  false "字段注解"
+//@Router	/audit [POST]
 func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := audit.Create{}
 	//bind args
@@ -83,7 +99,6 @@ func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	return
 }
 
-//O端审核
 func UpdateState(ctx *gin.Context) (res controller.STDResponse, err error) {
 	// 1.更新审核表
 	// 2.更新enterprise表

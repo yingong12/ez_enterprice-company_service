@@ -19,7 +19,7 @@ func Create(appID string, appType uint8, formData string) (err error) {
 func Search(appName, registrationNumber, appID string, stateArr []int, page, pageSize int) (res []model.Audit, total int64, err error) {
 	appIDs := []string{}
 	res = make([]model.Audit, 0)
-	//企业名称模糊查询
+	//审核名称模糊查询
 	if appName != "" {
 		if appIDs, err = repository.GetAppIDsByNames(appName); err != nil {
 			return
