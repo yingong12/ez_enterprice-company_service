@@ -28,16 +28,16 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 		res.Msg = "server error"
 		return
 	}
-	//添加label, 行业，地区
+	//添加label, 行业，地区。
 	for k := range list {
 		v := &list[k]
 		codeInd := v.Industry
 		codeDist := v.District
-		if node := dfsDistrict(&providers.DisrictDict, codeDist); node != nil {
-			v.LabelDistrict = node.Label
+		if path := getPathDistrict(&providers.DisrictDict, codeDist); len(path) > 0 {
+			v.LabelDistrict = path[1:]
 		}
-		if node := dfsIndustry(&providers.IndustryDict, codeInd); node != nil {
-			v.LabelIndustry = node.Label
+		if path := getPathIndustry(&providers.IndustryDict, codeInd); len(path) > 0 {
+			v.LabelIndustry = path[1:]
 		}
 	}
 	data := response.Search{
@@ -185,6 +185,40 @@ func GetDistrictByCode(ctx *gin.Context) (res controller.STDResponse, err error)
 		IsLeaf:   len(children) == 0,
 	}
 	res.Data = data
+	return
+}
+
+//DFS top-down 带入当前路劲。 bottom-up
+func getPathDistrict(root *model.District, target string) (path []string) {
+	if root == nil {
+		return
+	}
+	if root.Code == target {
+		path = []string{root.Label}
+		return
+	}
+	for _, d := range root.Children {
+		if cur := getPathDistrict(d, target); len(cur) > 0 {
+			path = append([]string{root.Label}, cur...)
+			return
+		}
+	}
+	return
+}
+func getPathIndustry(root *model.IndustryDict, target string) (path []string) {
+	if root == nil {
+		return
+	}
+	if root.Code == target {
+		path = []string{root.Label}
+		return
+	}
+	for _, d := range root.Children {
+		if cur := getPathIndustry(d, target); len(cur) > 0 {
+			path = append([]string{root.Label}, cur...)
+			return
+		}
+	}
 	return
 }
 

@@ -22,8 +22,6 @@ func loadRouter() (router *gin.Engine) {
 	router.POST("health", controller.Health)
 	//swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler)) // register swagger
-	//swagger
-	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // register swagger
 	// 企业模块
 	groupEnterprise := router.Group("/enterprise")
 	{

@@ -8,8 +8,8 @@ type Enterprise struct {
 	EnterpriseBuzFields
 }
 type EnterpriseBuzFields struct {
-	LabelIndustry string `json:"label_industry" gorm:"-"`
-	LabelDistrict string `json:"label_district" gorm:"-"`
+	LabelIndustry []string `json:"label_industry" gorm:"-"`
+	LabelDistrict []string `json:"label_district" gorm:"-"`
 }
 
 //业务侧可create和update的字段
