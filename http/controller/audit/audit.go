@@ -16,15 +16,15 @@ import (
 )
 
 func BindJSON(ctx *gin.Context, req interface{}) (err error) {
-	ctx.BindJSON(req)
+	err = ctx.BindJSON(req)
 	return
 }
 func BindQuery(ctx *gin.Context, form interface{}) (err error) {
-	ctx.BindQuery(form)
+	err = ctx.BindQuery(form)
 	return
 }
 func BindMultiForm(ctx *gin.Context, form interface{}) (err error) {
-	ctx.BindWith(form, binding.FormMultipart)
+	err = ctx.BindWith(form, binding.FormMultipart)
 	return
 }
 
@@ -81,7 +81,7 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := audit.Create{}
 	//bind args
-	if err = BindMultiForm(ctx, &req); err != nil {
+	if err = BindJSON(ctx, &req); err != nil {
 		res.Code = buz_code.CODE_INVALID_ARGS
 		res.Msg = err.Error()
 		return
