@@ -61,7 +61,7 @@ func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	if err = BindJSON(ctx, &req); err != nil {
 		return
 	}
-	err = service.Create(req.ValuateMuttable)
+	err = service.Create(req)
 	if err != nil {
 		res.Code = buz_code.CODE_SERVER_ERROR
 		res.Msg = "server error"

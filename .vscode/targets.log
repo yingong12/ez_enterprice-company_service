@@ -6,8 +6,11 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # PARTICULAR PURPOSE.
 
 # This program built for i386-apple-darwin11.3.0
+ 
+make: *** No rule to make target `all'.  Stop.
 
-# Make data base, printed on Mon Jun 20 00:50:09 2022
+
+# Make data base, printed on Thu Jun 23 00:44:37 2022
 
 # Variables
 
@@ -40,13 +43,13 @@ VSCODE_VERBOSE_LOGGING = true
 # environment
 __CFBundleIdentifier = com.microsoft.VSCode
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /var/folders/mv/vnpljmzd19v5xb2jhfc_9x340000gn/T/vscode-ipc-5ceb8088-7e01-4b45-82b9-08f4b06ed578.sock
+VSCODE_IPC_HOOK_EXTHOST = /var/folders/mv/vnpljmzd19v5xb2jhfc_9x340000gn/T/vscode-ipc-cd54501b-2e37-4d10-8df3-13c1182b428d.sock
 # environment
 VSCODE_CWD = /
 # environment
 GOPROXY = https://goproxy.cn,direct
 # environment
-PATH = /usr/local/go/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin
+PATH = /usr/local/go/bin:/usr/bin:/bin:/usr/sbin:/sbin
 # environment
 GOPATH = /Users/yin/go
 # environment
@@ -78,7 +81,7 @@ VSCODE_CODE_CACHE_PATH = /Users/yin/Library/Application Support/Code/CachedData/
 # environment
 LOGNAME = yin
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -235,8 +238,6 @@ run:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Mon Jun 20 00:50:09 2022
+# Finished Make data base on Thu Jun 23 00:44:37 2022
 
  
-make: *** No rule to make target `all'.  Stop.
-

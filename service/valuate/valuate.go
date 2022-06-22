@@ -1,24 +1,36 @@
 package valuate
 
 import (
+	val "company_service/http/request/valuate"
 	"company_service/model"
 	repository "company_service/repository/valuate"
 	"company_service/utils"
+	"encoding/json"
 	"log"
 )
 
-func Create(data model.ValuateMuttable) (err error) {
-	/*
-		生成valuate_id
-			1. 写KAFKA
-			2. 写DB更新为state=1
-	*/
+func Create(data val.Create) (err error) {
 	taskID := utils.GenerateValuateID()
-	err = repository.Create(data, taskID)
+	j, err := json.Marshal(data)
 	if err != nil {
 		return
 	}
-	partition, offset, err := repository.ProduceTaskMessage(taskID, data.FormData)
+	en := model.ValuateMuttable{
+		AppID:    data.AppID,
+		State:    data.State,
+		FormData: string(j),
+	}
+	err = repository.Create(en, taskID)
+	if err != nil {
+		return
+	}
+	choicesFomatted := parseChoices(data.Choices)
+	jj, err := json.Marshal(choicesFomatted)
+	if err != nil {
+		return err
+	}
+	//json转化为数组
+	partition, offset, err := repository.ProduceTaskMessage(taskID, string(jj), data.ProfitData)
 	if err != nil {
 		//TODO: 失败日志落盘。 离线任务滚动生产。
 		return
@@ -30,4 +42,38 @@ func Create(data model.ValuateMuttable) (err error) {
 func Search(appID string, page, pageSize int) (res []model.Valuate, err error) {
 	//search
 	return repository.Search(appID, page, pageSize)
+}
+
+func parseChoices(choices val.Choices) (res [][]int) {
+	res = [][]int{
+		choices.CompetitiveLandscape,
+		choices.BarrierIndustry,
+		choices.IndustryHook,
+		choices.Threat,
+		choices.PolicySupportPower,
+		choices.PolicySupportType,
+		choices.Founder,
+		choices.ManagementExp,
+		choices.AverageWorkingYears,
+		choices.UndergraduatesRadio,
+		choices.CertificateRadio,
+		choices.IsTraining,
+		choices.BusinessArea,
+		choices.Loyalty,
+		choices.IntellectualPropertyNumbers,
+		choices.RdInvestmentRadio,
+		choices.PrdType,
+		choices.CoreTurnoverRadio,
+		choices.IsInternalControlSystem,
+		choices.IsDishonestyRecord,
+		choices.IsRegularPhysicalExamination,
+		choices.ExitStrategy,
+	}
+	for k, v := range res {
+		if v == nil {
+			res[k] = []int{}
+		}
+	}
+	return
+
 }
