@@ -70,9 +70,16 @@ func parseChoices(choices val.Choices) (res [][]int) {
 		choices.ExitStrategy,
 	}
 	for k, v := range res {
-		if v == nil {
-			res[k] = []int{}
+		cur := make([]int, utils.ValChoiceToLength[k])
+		for _, v1 := range v {
+			realV := v1 - 1
+			//过滤不合格的
+			if realV >= len(cur) || realV < 0 {
+				continue
+			}
+			cur[realV] = 1
 		}
+		res[k] = cur
 	}
 	return
 
