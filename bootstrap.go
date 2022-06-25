@@ -145,7 +145,7 @@ func bootStrap() (err error) {
 	httpClients := []*library.HttpClientConfig{
 		{
 			Name:     "static_server",
-			BaseURL:  `http://` + env.GetStringVal("LB_STATIC_SERVICE") + "/upload",
+			BaseURL:  `http://` + env.GetStringVal("LB_STATIC_SERVICE") + "/",
 			Receiver: &providers.HttpClientStatic,
 		},
 	}

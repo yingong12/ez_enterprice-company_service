@@ -3,12 +3,15 @@ package valuate
 import (
 	val "company_service/http/request/valuate"
 	"company_service/model"
+	"company_service/providers"
 	enterprise "company_service/repository"
 	repository "company_service/repository/valuate"
 	"company_service/utils"
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"log"
+	"sync"
 )
 
 func Create(data val.Create) (err error) {
@@ -64,9 +67,43 @@ func Create(data val.Create) (err error) {
 	log.Printf("message produced.  partition:%d offset:%d", partition, offset)
 	return
 }
+func getStaticFileAsString(taskID string) (res string, err error) {
+	rsp, err := providers.HttpClientStatic.Get(providers.HttpClientStatic.BaseURL + taskID + ".json")
+	if err != nil {
+		return
+	}
+	b, err := ioutil.ReadAll(rsp.Body)
+	res = string(b)
+	log.Println(res)
+	return
+}
 func Search(appID string, page, pageSize int) (res []model.Valuate, err error) {
 	//search
-	return repository.Search(appID, page, pageSize)
+	list, err := repository.Search(appID, page, pageSize)
+	if err != nil || len(list) == 0 {
+		return
+	}
+	wg := sync.WaitGroup{}
+	wg.Add(len(list))
+	//
+	for i := 0; i < len(list); i++ {
+		go func(fn string, idx int) {
+			var err error
+			var fileStr string
+			defer func() {
+				if err != nil {
+					log.Println("估值结果查询失败", err)
+				}
+				list[idx].Result = fileStr
+				wg.Done()
+			}()
+			fileStr, err = getStaticFileAsString(fn)
+			return
+		}(list[i].ValuateID, i)
+	}
+	wg.Wait()
+	res = list
+	return
 }
 
 func parseChoices(choices val.Choices) (res [][]int) {

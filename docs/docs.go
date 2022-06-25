@@ -238,13 +238,17 @@ const docTemplate = `{
                     "description": "返回给业务侧",
                     "type": "string"
                 },
-                "file_path": {
-                    "type": "string"
-                },
                 "form_data": {
                     "type": "string"
                 },
+                "path": {
+                    "type": "string"
+                },
                 "requested_at": {
+                    "type": "string"
+                },
+                "result": {
+                    "description": "估值结果",
                     "type": "string"
                 },
                 "state": {
