@@ -10,6 +10,7 @@ type Valuate struct {
 	UpdatedAt    time.Time `gorm:"column:updated_at;default:CURRENT_TIMESTAMP;NOT NULL" json:"-"` // 更新时间
 	CreatedAtFmt string    `gorm:"-" json:"created_at"`                                           //返回给业务侧
 	UpdatedAtFmt string    `gorm:"-" json:"udated_at"`
+	Path         string    `gorm:"column:file_path" json:"file_path"`
 }
 
 //业务改变字段

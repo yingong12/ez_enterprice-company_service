@@ -3,9 +3,11 @@ package valuate
 import (
 	val "company_service/http/request/valuate"
 	"company_service/model"
+	enterprise "company_service/repository"
 	repository "company_service/repository/valuate"
 	"company_service/utils"
 	"encoding/json"
+	"errors"
 	"log"
 )
 
@@ -20,6 +22,29 @@ func Create(data val.Create) (err error) {
 		State:    data.State,
 		FormData: string(j),
 	}
+	//查询企业信息
+	res, err := enterprise.GetEnterpriseByAppIDs([]string{data.AppID})
+	if err != nil {
+		return
+	}
+	if len(res) == 0 {
+		err = errors.New("没找到相关企业信息")
+		return
+	}
+	//TODO:插入企业信息
+	enter := res[0]
+	enData := map[string]interface{}{
+		"industry":             enter.Industry,
+		"district":             enter.District,
+		"register_number":      enter.RegistrationNumber,
+		"legal_representative": enter.LegalRepresentative,
+		"business_scope":       enter.BusinessScope,
+	}
+	if err != nil {
+		return
+	}
+	shInfo := enter.ShareHolders
+	//写db
 	err = repository.Create(en, taskID)
 	if err != nil {
 		return
@@ -30,7 +55,7 @@ func Create(data val.Create) (err error) {
 		return err
 	}
 	//json转化为数组
-	partition, offset, err := repository.ProduceTaskMessage(taskID, string(jj), data.ProfitData)
+	partition, offset, err := repository.ProduceTaskMessage(taskID, string(jj), data.ProfitData, enData, shInfo)
 	if err != nil {
 		//TODO: 失败日志落盘。 离线任务滚动生产。
 		return

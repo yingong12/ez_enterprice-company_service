@@ -31,11 +31,13 @@ func Create(data model.ValuateMuttable, valID string) (err error) {
 	return
 }
 
-func ProduceTaskMessage(taskID string, choices string, data string) (partition int32, offset int64, err error) {
+func ProduceTaskMessage(taskID string, choices string, data string, enInfo map[string]interface{}, shareholders string) (partition int32, offset int64, err error) {
 	msgData := map[string]interface{}{
-		"task_id": taskID,
-		"data":    data,
-		"choice":  choices,
+		"task_id":       taskID,
+		"data":          data,
+		"choice":        choices,
+		"en_data":       enInfo,
+		"share_holders": shareholders,
 	}
 	j, err := json.Marshal(msgData)
 	if err != nil {
