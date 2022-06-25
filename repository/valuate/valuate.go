@@ -14,6 +14,8 @@ func Search(appID string, page, pageSize int) (res []model.Valuate, err error) {
 	tx := providers.DBenterprise.Table(model.GetValuateTable())
 	tx.
 		Where("app_id", appID).
+		//TODO:B O端统一，先看估值成功的
+		Where("state", 1).
 		Offset((page - 1) * pageSize).
 		Limit(pageSize).
 		Find(&res)
