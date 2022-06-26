@@ -23,5 +23,5 @@ type Create struct {
 }
 
 type Update struct {
-	model.GroupMuttable
+	Data model.GroupMuttable
 }

@@ -81,7 +81,7 @@ func Update(ctx *gin.Context) (res controller.STDResponse, err error) {
 		res.Code = buz_code.CODE_INVALID_ARGS
 		return
 	}
-	rf, err := service.Update(appID, req.GroupMuttable)
+	rf, err := service.Update(appID, req.Data)
 	if err != nil {
 		res.Code = buz_code.CODE_ENTERPRISE_UPDATE_FAILED
 	}
