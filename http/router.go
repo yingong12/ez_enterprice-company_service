@@ -39,7 +39,7 @@ func loadRouter() (router *gin.Engine) {
 		groupGroup.POST("", controller.STDwrapperJSON(group.Create))                            //新增机构
 		groupGroup.GET("", controller.STDwrapperJSON(group.Search))                             //机构列表
 		groupGroup.GET("get_children_multi", controller.STDwrapperJSON(group.GetChildrenMulti)) //获取机构关联的企业
-		groupGroup.PUT(":id", controller.STDwrapperJSON(group.Update))                          //修改机构信息
+		groupGroup.PUT(":app_id", controller.STDwrapperJSON(group.Update))                      //修改机构信息
 	}
 	//审核模块
 	groupAudit := router.Group("audit")

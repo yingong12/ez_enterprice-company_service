@@ -22,6 +22,9 @@ func STDwrapperJSON(handler func(*gin.Context) (STDResponse, error)) func(*gin.C
 		if res.Code == buz_code.CODE_OK {
 			res.Msg = "OK"
 		}
+		if err != nil {
+			res.Msg = err.Error()
+		}
 		//http status永远200。 用buz_code去表示错误
 		status := http.StatusOK
 		//write json response

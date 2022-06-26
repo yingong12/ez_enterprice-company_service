@@ -5,8 +5,6 @@ import (
 	"company_service/http/controller"
 	"company_service/http/request/group"
 	service "company_service/service/group"
-	"log"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -31,9 +29,7 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	if err != nil {
 		return
 	}
-	appIDs := strings.Split(req.AppIDs, ",")
-	log.Println(appIDs, len(appIDs), appIDs[0] == "")
-	list, total, err := service.Search(appIDs, req.Name, req.Sort, req.Page, req.PageSize)
+	list, total, err := service.Search(req.AppID, req.Name, req.Sort, req.Page, req.PageSize)
 	data := map[string]interface{}{
 		"list":  list,
 		"total": total,
@@ -42,11 +38,24 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	//
 	return
 }
+
+//批量查询儿子企业信息
 func GetChildrenMulti(ctx *gin.Context) (res controller.STDResponse, err error) {
+	//
 	req := group.GetChildrenMulti{}
 	err = BindQuery(ctx, &req)
 	if err != nil {
+		res.Code = buz_code.CODE_INVALID_ARGS
 		return
+	}
+	list, total, err := service.ChilrenInfo(req.AppID, req.Page, req.PageSize)
+	if err != nil {
+		res.Code = buz_code.CODE_SERVER_ERROR
+		return
+	}
+	res.Data = map[string]interface{}{
+		"list":  list,
+		"total": total,
 	}
 	//
 	return
@@ -56,16 +65,28 @@ func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	err = BindJSON(ctx, &req)
 	if err != nil {
 		res.Code = buz_code.CODE_INVALID_ARGS
-		res.Msg = err.Error()
 		return
 	}
 	err = service.Create(req.UID, req.Data)
 	if err != nil {
 		res.Code = buz_code.CODE_ENTERPRISE_CREATE_FAILED
-		res.Msg = err.Error()
 	}
 	return
 }
 func Update(ctx *gin.Context) (res controller.STDResponse, err error) {
+	req := group.Update{}
+	appID := ctx.Param("app_id")
+	err = BindJSON(ctx, &req)
+	if err != nil {
+		res.Code = buz_code.CODE_INVALID_ARGS
+		return
+	}
+	rf, err := service.Update(appID, req.GroupMuttable)
+	if err != nil {
+		res.Code = buz_code.CODE_ENTERPRISE_UPDATE_FAILED
+	}
+	res.Data = map[string]interface{}{
+		"affected_rows": rf,
+	}
 	return
 }
