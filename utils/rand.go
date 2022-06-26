@@ -41,3 +41,7 @@ func GenerateAuditID() string {
 func GenerateValuateID() string {
 	return genRandomString("val_", 16, charset)
 }
+
+func GenerateGroupID() string {
+	return genRandomString("grp_", 16, charset)
+}

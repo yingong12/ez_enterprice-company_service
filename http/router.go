@@ -5,6 +5,7 @@ import (
 	"company_service/http/controller"
 	"company_service/http/controller/audit"
 	"company_service/http/controller/enterprise"
+	"company_service/http/controller/group"
 	"company_service/http/controller/value"
 	"company_service/http/middleware"
 
@@ -33,11 +34,13 @@ func loadRouter() (router *gin.Engine) {
 		groupEnterprise.GET("get_district_children", controller.STDwrapperJSON(enterprise.GetDistrictByCode)) //            根据地区代码查询地区节点以及他的所有儿子
 	}
 	// //机构模块
-	// // group := router.Group("/group")
-	// {
-	// group.GET("") //获取机构信息
-	// group.GET("/enterprise/", controller.GetAssets) //获取机构拥有的企业id
-	// }
+	groupGroup := router.Group("/group")
+	{
+		groupGroup.POST("", controller.STDwrapperJSON(group.Create))                            //新增机构
+		groupGroup.GET("", controller.STDwrapperJSON(group.Search))                             //机构列表
+		groupGroup.GET("get_children_multi", controller.STDwrapperJSON(group.GetChildrenMulti)) //获取机构关联的企业
+		groupGroup.PUT(":id", controller.STDwrapperJSON(group.Update))                          //修改机构信息
+	}
 	//审核模块
 	groupAudit := router.Group("audit")
 	{
