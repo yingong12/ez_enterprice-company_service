@@ -10,7 +10,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target `all'.  Stop.
 
 
-# Make data base, printed on Fri Jun 24 10:08:45 2022
+# Make data base, printed on Sun Jun 26 10:52:09 2022
 
 # Variables
 
@@ -27,7 +27,6 @@ VSCODE_LOG_NATIVE = false
 # automatic
 @F = $(notdir $@)
 # makefile
- 
 CURDIR := /Users/yin/Work/Ownprojects/估值管理系统/ez_enterprice-company_service
 # makefile
 SHELL = /bin/sh
@@ -44,7 +43,7 @@ VSCODE_VERBOSE_LOGGING = true
 # environment
 __CFBundleIdentifier = com.microsoft.VSCode
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /var/folders/mv/vnpljmzd19v5xb2jhfc_9x340000gn/T/vscode-ipc-ccea186e-8b54-40e9-9d92-bbfb0d717408.sock
+VSCODE_IPC_HOOK_EXTHOST = /var/folders/mv/vnpljmzd19v5xb2jhfc_9x340000gn/T/vscode-ipc-76b611e0-73e1-448c-8c0b-2aef001f8ed1.sock
 # environment
 VSCODE_CWD = /
 # environment
@@ -54,7 +53,7 @@ PATH = /usr/local/go/bin:/usr/bin:/bin:/usr/sbin:/sbin
 # environment
 GOPATH = /Users/yin/go
 # environment
-LaunchInstanceID = 9CEDFFB1-AC84-40AC-943D-08BE64C5172C
+LaunchInstanceID = 94217A88-C05A-46FC-82D9-B30CA8D21319
 # environment
 VSCODE_LOG_STACK = false
 # environment
@@ -62,7 +61,7 @@ ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.TcX7jNrjFV/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.ANANxRX7TV/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -136,7 +135,7 @@ MAKEFILES :=
 # environment
 LC_ALL = C
 # environment
-SECURITYSESSIONID = 186a9
+SECURITYSESSIONID = 186a8
 # automatic
 ^F = $(notdir $^)
 # default
@@ -150,7 +149,7 @@ os = linux
 # environment
 LANG = C
 # environment
-VSCODE_PID = 681
+VSCODE_PID = 513
 # variable set hash-table stats:
 # Load=68/1024=7%, Rehash=0, Collisions=4/95=4%
 
@@ -160,7 +159,7 @@ VSCODE_PID = 681
 
 # Directories
 
-# . (device 16777232, inode 21655856): 24 files, no impossibilities.
+# . (device 16777231, inode 21655856): 24 files, no impossibilities.
 
 # 24 files, no impossibilities in 1 directories.
 
@@ -239,6 +238,6 @@ run:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Fri Jun 24 10:08:45 2022
+# Finished Make data base on Sun Jun 26 10:52:09 2022
 
  

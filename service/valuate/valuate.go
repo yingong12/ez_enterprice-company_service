@@ -25,7 +25,12 @@ func Create(data val.Create) (err error) {
 		State:    data.State,
 		FormData: string(j),
 	}
-	//查询企业信息
+	//写估值表
+	err = repository.Create(en, taskID)
+	if err != nil {
+		return
+	}
+	//查询企业信息,并添加到kafka msg中
 	res, err := enterprise.GetEnterpriseByAppIDs([]string{data.AppID})
 	if err != nil {
 		return
@@ -37,21 +42,21 @@ func Create(data val.Create) (err error) {
 	//TODO:插入企业信息
 	enter := res[0]
 	enData := map[string]interface{}{
-		"industry":             enter.Industry,
-		"district":             enter.District,
+		"district":             "",
+		"industry":             "",
 		"register_number":      enter.RegistrationNumber,
 		"legal_representative": enter.LegalRepresentative,
 		"business_scope":       enter.BusinessScope,
 	}
-	if err != nil {
-		return
+	d := utils.DFSDistrict(&providers.DisrictDict, enter.District)
+	if d != nil {
+		enData["district"] = d.Label
+	}
+	i := utils.DFSIndustry(&providers.IndustryDict, enter.Industry)
+	if i != nil {
+		enData["industry"] = i.Label
 	}
 	shInfo := enter.ShareHolders
-	//写db
-	err = repository.Create(en, taskID)
-	if err != nil {
-		return
-	}
 	choicesFomatted := parseChoices(data.Choices)
 	jj, err := json.Marshal(choicesFomatted)
 	if err != nil {
@@ -64,7 +69,7 @@ func Create(data val.Create) (err error) {
 		return
 	}
 	//log
-	log.Printf("message produced.  partition:%d offset:%d", partition, offset)
+	log.Printf("val message produced.  partition:%d offset:%d", partition, offset)
 	return
 }
 func getStaticFileAsString(taskID string) (res string, err error) {

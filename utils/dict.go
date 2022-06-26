@@ -1,5 +1,7 @@
 package utils
 
+import "company_service/model"
+
 // map
 var filterMap = []string{
 	",district",
@@ -126,4 +128,34 @@ var ValKey2IndexData = []string{
 	"total_liabilities2",
 	"net_profit",
 	"securities",
+}
+
+//找出该节点和所有儿子
+func DFSDistrict(root *model.District, target string) *model.District {
+	if root == nil {
+		return nil
+	}
+	if root.Code == target {
+		return root
+	}
+	for _, d := range root.Children {
+		if cur := DFSDistrict(d, target); cur != nil {
+			return cur
+		}
+	}
+	return nil
+}
+func DFSIndustry(root *model.IndustryDict, target string) *model.IndustryDict {
+	if root == nil {
+		return nil
+	}
+	if root.Code == target {
+		return root
+	}
+	for _, d := range root.Children {
+		if cur := DFSIndustry(d, target); cur != nil {
+			return cur
+		}
+	}
+	return nil
 }

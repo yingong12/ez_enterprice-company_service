@@ -128,7 +128,7 @@ func GetIndustryByCode(ctx *gin.Context) (res controller.STDResponse, err error)
 	//DFS
 	//根据ID拿节点以及儿子
 	code := ctx.Query("code")
-	node := dfsIndustry(&providers.IndustryDict, code)
+	node := utils.DFSIndustry(&providers.IndustryDict, code)
 	if node == nil {
 		res.Code = buz_code.CODE_NODE_NOT_FOUND
 		res.Msg = "节点不存在"
@@ -158,7 +158,7 @@ func GetDistrictByCode(ctx *gin.Context) (res controller.STDResponse, err error)
 	//DFS
 	code := ctx.Query("code")
 	log.Println(code)
-	node := dfsDistrict(&providers.DisrictDict, code)
+	node := utils.DFSDistrict(&providers.DisrictDict, code)
 	if node == nil {
 		res.Code = buz_code.CODE_NODE_NOT_FOUND
 		res.Msg = "节点不存在"
@@ -220,34 +220,4 @@ func getPathIndustry(root *model.IndustryDict, target string) (path []string) {
 		}
 	}
 	return
-}
-
-//找出该节点和所有儿子
-func dfsDistrict(root *model.District, target string) *model.District {
-	if root == nil {
-		return nil
-	}
-	if root.Code == target {
-		return root
-	}
-	for _, d := range root.Children {
-		if cur := dfsDistrict(d, target); cur != nil {
-			return cur
-		}
-	}
-	return nil
-}
-func dfsIndustry(root *model.IndustryDict, target string) *model.IndustryDict {
-	if root == nil {
-		return nil
-	}
-	if root.Code == target {
-		return root
-	}
-	for _, d := range root.Children {
-		if cur := dfsIndustry(d, target); cur != nil {
-			return cur
-		}
-	}
-	return nil
 }
