@@ -8,12 +8,14 @@ import (
 	"log"
 )
 
-func Create(uid string, data model.GroupMuttable) (err error) {
-	log.Println(uid, data)
-	appID := utils.GenerateGroupID()
+func Create(appID, uid string, data model.GroupMuttable) (err error) {
+	if appID == "" {
+		appID = utils.GenerateGroupID()
+	}
 	en := model.Group{}
 	en.AppID = appID
 	en.GroupMuttable = data
+	en.UID = uid
 	tx := providers.DBenterprise.Table(model.GetGroupTable())
 	tx.Create(en)
 	err = tx.Error

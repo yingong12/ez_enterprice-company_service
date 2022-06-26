@@ -12,6 +12,16 @@ import (
 	"gorm.io/gorm"
 )
 
+//新用户绑定app
+func BindPlaceHolder(uid string, appType int) (appID string, err error) {
+	// if appType == 1 {
+	// 	table = model.GetGroupTable()
+	// } else {
+	// 	table = model.GetEnterpriseTable()
+	// }
+	//user表，redis，app表
+	return
+}
 func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, total int64, err error) {
 	tx := providers.DBenterprise.Begin().Table(model.GetEnterpriseTable())
 	defer tx.Commit()

@@ -45,3 +45,7 @@ func GenerateValuateID() string {
 func GenerateGroupID() string {
 	return genRandomString("grp_", 16, charset)
 }
+
+func GenStringWithPrefix(prefix string, strLen int) string {
+	return genRandomString(prefix, strLen, charset)
+}

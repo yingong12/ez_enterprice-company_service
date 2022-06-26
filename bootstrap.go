@@ -147,6 +147,10 @@ func bootStrap() (err error) {
 			Name:     "static_server",
 			BaseURL:  `http://` + env.GetStringVal("LB_STATIC_SERVICE") + "/",
 			Receiver: &providers.HttpClientStatic,
+		}, {
+			Name:     "account_server",
+			BaseURL:  `http://` + env.GetStringVal("LB_ACCOUNT_SERVICE") + "/",
+			Receiver: &providers.HttpClientAccount,
 		},
 	}
 	for _, cfg := range httpClients {

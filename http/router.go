@@ -26,6 +26,7 @@ func loadRouter() (router *gin.Engine) {
 	// 企业模块
 	groupEnterprise := router.Group("/enterprise")
 	{
+		groupEnterprise.POST("bind_placeholder", controller.STDwrapperJSON(enterprise.Init))
 		groupEnterprise.POST("/search", controller.STDwrapperJSON(enterprise.Search))                         //企业信息搜索接口
 		groupEnterprise.GET("/by_app_ids", controller.STDwrapperJSON(enterprise.QueryByIDs))                  //根据企业id拿信息,批量
 		groupEnterprise.POST("", controller.STDwrapperJSON(enterprise.Create))                                //新建企业 用于O端(zy要求)
@@ -36,6 +37,7 @@ func loadRouter() (router *gin.Engine) {
 	// //机构模块
 	groupGroup := router.Group("/group")
 	{
+		groupGroup.POST("bind_placeholder", controller.STDwrapperJSON(group.Init))
 		groupGroup.POST("", controller.STDwrapperJSON(group.Create))                            //新增机构
 		groupGroup.GET("", controller.STDwrapperJSON(group.Search))                             //机构列表
 		groupGroup.GET("get_children_multi", controller.STDwrapperJSON(group.GetChildrenMulti)) //获取机构关联的企业

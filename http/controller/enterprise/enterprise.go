@@ -7,14 +7,68 @@ import (
 	"company_service/http/response"
 	"company_service/model"
 	"company_service/providers"
+	en "company_service/repository"
 	"company_service/service"
 	"company_service/utils"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
+type RequestInit struct {
+	UID string `json:"uid"`
+}
+
+func Init(ctx *gin.Context) (res controller.STDResponse, err error) {
+	req := &RequestInit{}
+	if err = ctx.BindJSON(&req); err != nil {
+		res.Code = buz_code.CODE_INVALID_ARGS
+		res.Msg = err.Error()
+		return
+	}
+	//
+	client := providers.HttpClientAccount
+	url := fmt.Sprintf("%saccount/init_app?uid=%s&b_access_token=%s", client.BaseURL, req.UID, ctx.GetHeader("b_access_token"))
+	rsp, err := client.Get(url)
+	if err != nil || rsp.StatusCode != 200 {
+		log.Println(err, 37, rsp.StatusCode)
+		res.Code = buz_code.CODE_SERVER_ERROR
+		return
+	}
+	httpRes := map[string]interface{}{}
+	buf, err := ioutil.ReadAll(rsp.Body)
+	log.Println((string)(buf), 42)
+	if err != nil {
+		res.Code = buz_code.CODE_SERVER_ERROR
+		return
+	}
+	err = json.Unmarshal(buf, &httpRes)
+	if err != nil {
+		res.Code = buz_code.CODE_SERVER_ERROR
+		return
+	}
+	if httpRes["code"].(float64) != 0 {
+		res.Code = buz_code.CODE_SERVER_ERROR
+		err = errors.New(httpRes["msg"].(string))
+		return
+	}
+	appID := httpRes["data"].(string)
+	//
+	//
+	data := model.EnterpriseMuttable{
+		Name:               utils.GenStringWithPrefix("企业_app", 16),
+		RegistrationNumber: utils.GenStringWithPrefix("信用代码", 14),
+	}
+	err = en.Create(appID, req.UID, "", data)
+	res.Data = appID
+	return
+
+}
 func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := request.Search{}
 	if err = ctx.BindJSON(&req); err != nil {
