@@ -6,11 +6,8 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # PARTICULAR PURPOSE.
 
 # This program built for i386-apple-darwin11.3.0
- 
-make: *** No rule to make target `all'.  Stop.
 
-
-# Make data base, printed on Sun Jun 26 10:52:09 2022
+# Make data base, printed on Tue Jun 28 10:10:49 2022
 
 # Variables
 
@@ -43,7 +40,7 @@ VSCODE_VERBOSE_LOGGING = true
 # environment
 __CFBundleIdentifier = com.microsoft.VSCode
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /var/folders/mv/vnpljmzd19v5xb2jhfc_9x340000gn/T/vscode-ipc-76b611e0-73e1-448c-8c0b-2aef001f8ed1.sock
+VSCODE_IPC_HOOK_EXTHOST = /var/folders/mv/vnpljmzd19v5xb2jhfc_9x340000gn/T/vscode-ipc-7c9d727a-1e83-498f-8e6e-d08bfdcac806.sock
 # environment
 VSCODE_CWD = /
 # environment
@@ -53,7 +50,7 @@ PATH = /usr/local/go/bin:/usr/bin:/bin:/usr/sbin:/sbin
 # environment
 GOPATH = /Users/yin/go
 # environment
-LaunchInstanceID = 94217A88-C05A-46FC-82D9-B30CA8D21319
+LaunchInstanceID = 8BF8B567-6E3B-4FD5-ACFF-D9BE54C65D6E
 # environment
 VSCODE_LOG_STACK = false
 # environment
@@ -61,7 +58,7 @@ ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.ANANxRX7TV/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.KUOdXz4jao/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -135,7 +132,7 @@ MAKEFILES :=
 # environment
 LC_ALL = C
 # environment
-SECURITYSESSIONID = 186a8
+SECURITYSESSIONID = 186a9
 # automatic
 ^F = $(notdir $^)
 # default
@@ -149,7 +146,7 @@ os = linux
 # environment
 LANG = C
 # environment
-VSCODE_PID = 513
+VSCODE_PID = 504
 # variable set hash-table stats:
 # Load=68/1024=7%, Rehash=0, Collisions=4/95=4%
 
@@ -159,9 +156,9 @@ VSCODE_PID = 513
 
 # Directories
 
-# . (device 16777231, inode 21655856): 24 files, no impossibilities.
+# . (device 16777231, inode 21655856): 26 files, no impossibilities.
 
-# 24 files, no impossibilities in 1 directories.
+# 26 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -238,6 +235,8 @@ run:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Jun 26 10:52:09 2022
+# Finished Make data base on Tue Jun 28 10:10:49 2022
 
  
+make: *** No rule to make target `all'.  Stop.
+

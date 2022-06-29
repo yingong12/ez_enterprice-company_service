@@ -4,6 +4,7 @@ import (
 	"company_service/http/buz_code"
 	"company_service/http/controller"
 	"company_service/http/request/valuate"
+	"company_service/model"
 	service "company_service/service/valuate"
 	"fmt"
 	"net/http"
@@ -50,6 +51,9 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 		res.Code = buz_code.CODE_SERVER_ERROR
 		res.Msg = "server error"
 		return
+	}
+	if list == nil {
+		list = []model.Valuate{}
 	}
 	res.Data = list
 	return

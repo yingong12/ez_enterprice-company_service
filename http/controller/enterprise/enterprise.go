@@ -143,7 +143,6 @@ func Update(ctx *gin.Context) (res controller.STDResponse, err error) {
 	rows, err := service.Update(appID, req.Data)
 	if err != nil {
 		//TODO:几种业务报错怎么更优雅的去弄
-		//把具体哪个键报出来
 		if utils.IsMysqlDupKeyErr(err) {
 			res.Code = buz_code.CODE_ENTERPRISE_UPDATE_FAILED
 			res.Msg = err.Error()

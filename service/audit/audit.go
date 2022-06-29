@@ -5,15 +5,45 @@ import (
 	"company_service/providers"
 	enterprise "company_service/repository"
 	repository "company_service/repository/audit"
+	group "company_service/service/group"
 	"company_service/utils"
+	"encoding/json"
 )
 
-func Create(appID string, appType uint8, formData string) (err error) {
+//审核中
+const STATE_AUDITING int8 = 0
+
+func Create(appID string, appType int8, formData string) (err error) {
 	//获取唯一audit_id
 	auditID := utils.GenerateAuditID()
 	now := utils.GetNowFMT()
 	//写db
-	return repository.Create(auditID, appID, appType, formData, now)
+	where := map[string]interface{}{
+		"app_id": appID,
+	}
+	//TODO: 这里用事务
+	if appType == 1 {
+		//机构
+		muData := model.GroupMuttable{}
+		//解析表单
+		if err = json.Unmarshal(([]byte)(formData), &muData); err != nil {
+			return
+		}
+		_, err = group.Update(appID, muData, STATE_AUDITING)
+	} else {
+
+		muData := model.EnterpriseMuttable{}
+		//解析表单
+		if err = json.Unmarshal(([]byte)(formData), &muData); err != nil {
+			return
+		}
+		_, err = enterprise.Update(where, muData, STATE_AUDITING)
+	}
+	if err != nil {
+		return
+	}
+	repository.Create(auditID, appID, appType, formData, now)
+	return
 }
 
 func Search(appName, registrationNumber, appID string, stateArr []int, page, pageSize int) (res []model.Audit, total int64, err error) {
@@ -49,8 +79,9 @@ func UpdateState(auditID, appID string, state int, comment string) (rowCount int
 	tx := providers.DBenterprise.Begin()
 	defer func() {
 		//rollback
-		if err != nil || rowCount <= 0 {
+		if err != nil {
 			tx.Rollback()
+			return
 		}
 		tx.Commit()
 	}()
@@ -58,12 +89,12 @@ func UpdateState(auditID, appID string, state int, comment string) (rowCount int
 		此处带入appid是为了校验该appid是否是库里存的appid
 	*/
 	//更新audit表
-	rowCount, err = repository.UpdateState(auditID, appID, comment, state)
+	rowCount, err = repository.UpdateState(tx, auditID, appID, comment, state)
 	if rowCount <= 0 || err != nil {
 		return
 	}
 	//更新enterprise表
 	where := map[string]interface{}{"app_id": appID}
-	rowCount, err = enterprise.SuperUpdate(where, data)
+	rowCount, err = enterprise.SuperUpdate(tx, where, data)
 	return
 }

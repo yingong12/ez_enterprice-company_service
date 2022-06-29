@@ -72,7 +72,7 @@ func Init(ctx *gin.Context) (res controller.STDResponse, err error) {
 	//
 	//
 	data := model.GroupMuttable{
-		Name:               utils.GenStringWithPrefix("企业_app", 16),
+		Name:               utils.GenStringWithPrefix("机构_grp", 16),
 		RegistrationNumber: utils.GenStringWithPrefix("信用代码", 14),
 	}
 	err = service.Create(appID, req.UID, data)
@@ -86,6 +86,14 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 		return
 	}
 	list, total, err := service.Search(req.AppID, req.Name, req.Sort, req.Page, req.PageSize)
+	for k := range list {
+		if d := utils.DFSDistrict(&providers.DisrictDict, list[k].District); d != nil {
+			list[k].LabelDistrict = []string{d.Label}
+		}
+		if d := utils.DFSIndustry(&providers.IndustryDict, list[k].Industry); d != nil {
+			list[k].LabelIndustry = []string{d.Label}
+		}
+	}
 	data := map[string]interface{}{
 		"list":  list,
 		"total": total,
@@ -129,6 +137,8 @@ func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	}
 	return
 }
+
+//TODO:
 func Update(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := group.Update{}
 	appID := ctx.Param("app_id")
@@ -137,7 +147,7 @@ func Update(ctx *gin.Context) (res controller.STDResponse, err error) {
 		res.Code = buz_code.CODE_INVALID_ARGS
 		return
 	}
-	rf, err := service.Update(appID, req.Data)
+	rf, err := service.Update(appID, req.Data, -1)
 	if err != nil {
 		res.Code = buz_code.CODE_ENTERPRISE_UPDATE_FAILED
 	}

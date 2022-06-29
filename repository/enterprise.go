@@ -12,7 +12,7 @@ import (
 
 //
 func Search(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, err error) {
-
+	tx = tx.Where("state <> ?", model.ENTERPRISE_STATE_DELETED)
 	//TODO:需支持全文搜索
 	for _, v := range textFilters {
 		p := utils.ParseFilter(v.Type)
@@ -126,26 +126,29 @@ func createEnterPriseEntityByMuttables(data model.EnterpriseMuttable) (res model
 	return
 }
 
-func Update(where map[string]interface{}, data model.EnterpriseMuttable) (affectedRows int64, err error) {
+func Update(where map[string]interface{}, data model.EnterpriseMuttable, state int8) (affectedRows int64, err error) {
 	en := createEnterPriseEntityByMuttables(data)
+	// 为-1时不更新state
 	tx := providers.DBenterprise.
 		Table(model.GetEnterpriseTable())
 	for k, v := range where {
-		tx.Where(k, v)
+		tx = tx.Where(k, v)
 	}
-	tx.Updates(en)
+	tx = tx.Updates(en)
+	if state != -1 {
+		tx = tx.Update("state", state)
+	}
 	affectedRows = tx.RowsAffected
 	err = tx.Error
 	return
 }
 
-func SuperUpdate(where map[string]interface{}, data model.Enterprise) (affectedRows int64, err error) {
-	tx := providers.DBenterprise.
-		Table(model.GetEnterpriseTable())
+func SuperUpdate(tx *gorm.DB, where map[string]interface{}, data model.Enterprise) (affectedRows int64, err error) {
+	tx = tx.Table(model.GetEnterpriseTable())
 	for k, v := range where {
-		tx.Where(k, v)
+		tx = tx.Where(k, v)
 	}
-	tx.Updates(data)
+	tx = tx.Updates(data)
 	affectedRows = tx.RowsAffected
 	err = tx.Error
 	return

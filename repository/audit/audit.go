@@ -9,9 +9,11 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
+
+	"gorm.io/gorm"
 )
 
-func Create(auditID, appID string, appType uint8, formData string, requestedAt string) (err error) {
+func Create(auditID, appID string, appType int8, formData string, requestedAt string) (err error) {
 	//插入, 删掉多余的字段
 	tx := providers.DBenterprise.Table(model.GetAuditTable())
 	en := model.Audit{
@@ -53,14 +55,15 @@ func Search(appIDs []string, stateArr []int, page, pageSize int) (res []model.Au
 	return
 }
 
-func UpdateState(auditID, appID, comment string, state int) (rowCount int64, err error) {
-	tx := providers.DBenterprise.Table(model.GetAuditTable())
-	tx.Where("audit_id", auditID)
-	tx.Where("app_id", appID)
-	tx.Update("state", state)
+func UpdateState(tx *gorm.DB, auditID, appID, comment string, state int) (rowCount int64, err error) {
+	tx = tx.
+		Table(model.GetAuditTable()).
+		Where("audit_id", auditID).
+		Where("app_id", appID).
+		Update("state", state)
 	//默认值不更新
 	if comment != "" {
-		tx.Update("comment", comment)
+		tx = tx.Update("comment", comment)
 	}
 	rowCount = tx.RowsAffected
 	err = tx.Error

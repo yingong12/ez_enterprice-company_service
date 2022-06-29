@@ -225,6 +225,10 @@ const docTemplate = `{
                 },
                 "stage": {
                     "type": "integer"
+                },
+                "state": {
+                    "description": "审核状态",
+                    "type": "integer"
                 }
             }
         },

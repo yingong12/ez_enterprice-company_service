@@ -31,13 +31,13 @@ type GroupMuttable struct {
 	ShareHoldersJSON         string `gorm:"-" json:"shar_holders_json"`
 	BusinessScope            string `gorm:"column:business_scope" json:"business_scope"`
 	ChildrenCount            int    `gorm:"column:children_count" json:"children_count"`
+	State                    int8   `gorm:"column:state" json:"state"` //审核状态
 }
 
 //不允许业务update的字段
 type GroupImmutable struct {
 	AppID        string    `gorm:"column:app_id" json:"app_id"`
 	UID          string    `gorm:"column:uid" json:"uid"`
-	State        int8      `gorm:"column:state" json:"state"`                                     //审核状态
 	CreatedAt    time.Time `gorm:"column:created_at;default:CURRENT_TIMESTAMP;NOT NULL" json:"-"` // 创建时间
 	UpdatedAt    time.Time `gorm:"column:updated_at;default:CURRENT_TIMESTAMP;NOT NULL" json:"-"` // 更新时间
 	CreatedAtFmt string    `gorm:"-" json:"created_at"`                                           //返回给业务侧

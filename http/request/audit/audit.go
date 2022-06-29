@@ -2,7 +2,7 @@ package audit
 
 type Create struct {
 	AppID    string `json:"app_id"`
-	AppType  uint8  `json:"app_type"`  /*0-企业  1-机构*/
+	AppType  int8   `json:"app_type"`  /*0-企业  1-机构*/
 	FormData string `json:"form_data"` /*审核表单信息 json*/
 }
 

@@ -5,7 +5,6 @@ import (
 	"company_service/providers"
 	"company_service/utils"
 	"fmt"
-	"log"
 )
 
 func Create(appID, uid string, data model.GroupMuttable) (err error) {
@@ -22,11 +21,12 @@ func Create(appID, uid string, data model.GroupMuttable) (err error) {
 	return
 }
 
-func Update(appID string, data model.GroupMuttable) (rf int64, err error) {
-	log.Println(appID, data)
+func Update(appID string, data model.GroupMuttable, state int8) (rf int64, err error) {
 	tx := providers.DBenterprise.Table(model.GetGroupTable())
-	tx.Where("app_id", appID)
-	tx.Updates(data)
+	tx = tx.Where("app_id", appID).Updates(data)
+	if state != -1 {
+		tx = tx.Update("state", state)
+	}
 	err = tx.Error
 	rf = tx.RowsAffected
 	return
@@ -35,10 +35,10 @@ func Update(appID string, data model.GroupMuttable) (rf int64, err error) {
 func Search(appID string, name string, sort uint8, page int, pageSize int) (res []model.Group, total int64, err error) {
 	tx := providers.DBenterprise.Table(model.GetGroupTable())
 	if appID != "" {
-		tx.Where("app_id", appID)
+		tx = tx.Where("app_id", appID)
 	}
 	if len(name) > 0 {
-		tx.Where("name like ?", "%"+name+"%")
+		tx = tx.Where("name like ?", "%"+name+"%")
 	}
 	sortClause := ""
 	if sort == 0 {
@@ -49,10 +49,11 @@ func Search(appID string, name string, sort uint8, page int, pageSize int) (res 
 	} else {
 		sortClause = fmt.Sprintf("children_count DESC")
 	}
-	tx.Order(sortClause)
+	tx = tx.Where("state <> ?", model.ENTERPRISE_STATE_DELETED)
+	tx = tx.Order(sortClause)
 	//page>0启用分页
 	if page > 0 {
-		tx.Offset((page - 1) * pageSize).Limit(pageSize)
+		tx = tx.Offset((page - 1) * pageSize).Limit(pageSize)
 	}
 	tx.Find(&res)
 	err = tx.Error
@@ -70,6 +71,7 @@ func getTotal(appID, name string, sort uint8) (total int64, err error) {
 	if len(name) > 0 {
 		tx.Where("name like ?", "%"+name+"%")
 	}
+	tx = tx.Where("state <> ?", model.ENTERPRISE_STATE_DELETED)
 	sortClause := ""
 	if sort == 0 {
 		//默认主键逆序
@@ -93,6 +95,7 @@ func ChilrenInfo(appID string, page, pageSize int) (res []model.Enterprise, tota
 	if page > 0 {
 		tx.Offset((page - 1) * pageSize).Limit(pageSize)
 	}
+	tx = tx.Where("state <> ?", model.ENTERPRISE_STATE_DELETED)
 	tx.Find(&res)
 	err = tx.Error
 	if err != nil {
@@ -104,6 +107,7 @@ func ChilrenInfo(appID string, page, pageSize int) (res []model.Enterprise, tota
 func getChildrenTotal(appID string) (total int64, err error) {
 	tx := providers.DBenterprise.Table(model.GetEnterpriseTable())
 	tx.Where("parent_id", appID)
+	tx = tx.Where("state <> ?", model.ENTERPRISE_STATE_DELETED)
 	tx.Count(&total)
 	err = tx.Error
 	return

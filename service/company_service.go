@@ -7,9 +7,6 @@ import (
 	"company_service/providers"
 	"company_service/repository"
 	"company_service/utils"
-	"errors"
-
-	"gorm.io/gorm"
 )
 
 //新用户绑定app
@@ -35,16 +32,10 @@ func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter
 
 func Create(uid string, pid string, data model.EnterpriseMuttable) (buzCode buz_code.Code, msg string, err error) {
 	//查是否已存在
-	tx := providers.DBenterprise.Begin()
-
 	defer func() {
 		buzCode = buz_code.CODE_ENTERPRISE_CREATE_FAILED
 		if err != nil {
 			msg = err.Error()
-			if msg == "该用户已经注册过公司" {
-				err = nil
-				buzCode = buz_code.CODE_ENTERPRISE_CREATE_FAILED
-			}
 			if utils.IsMysqlDupKeyErr(err) {
 				err = nil
 				buzCode = buz_code.CODE_ENTERPRISE_CREATE_FAILED
@@ -54,16 +45,10 @@ func Create(uid string, pid string, data model.EnterpriseMuttable) (buzCode buz_
 		}
 		buzCode = buz_code.CODE_OK
 		msg = "ok"
-		tx.Commit()
 		return
 	}()
-	//没被注册才继续
-	_, err = repository.GetEnterpriseByKey("uid", uid)
-	if err != gorm.ErrRecordNotFound {
-		err = errors.New("该用户已经注册过公司")
-		return
-	}
 	//能新建
+	//TODO:占位符
 	appID := utils.GenerateAppID()
 	err = repository.Create(appID, uid, pid, data)
 	return
@@ -73,7 +58,7 @@ func Update(appID string, data model.EnterpriseMuttable) (rows int64, err error)
 	where := map[string]interface{}{
 		"app_id": appID,
 	}
-	rows, err = repository.Update(where, data)
+	rows, err = repository.Update(where, data, -1)
 	return
 }
 
