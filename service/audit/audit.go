@@ -8,6 +8,8 @@ import (
 	group "company_service/service/group"
 	"company_service/utils"
 	"encoding/json"
+
+	"gorm.io/gorm"
 )
 
 //审核中
@@ -73,7 +75,7 @@ func Search(appName, registrationNumber, appID string, stateArr []int, page, pag
 
 }
 
-func UpdateState(auditID, appID string, state int, comment string) (rowCount int64, err error) {
+func UpdateState(auditID, appID string, appType uint16, state int, comment string) (rowCount int64, err error) {
 	data := model.Enterprise{}
 	data.State = int8(state)
 	tx := providers.DBenterprise.Begin()
@@ -93,8 +95,24 @@ func UpdateState(auditID, appID string, state int, comment string) (rowCount int
 	if rowCount <= 0 || err != nil {
 		return
 	}
-	//更新enterprise表
 	where := map[string]interface{}{"app_id": appID}
+	//机构
+	if appType == 1 {
+		rowCount, err = updateGroup(tx, where, data)
+		return
+	}
+	//更新enterprise表
 	rowCount, err = enterprise.SuperUpdate(tx, where, data)
+	return
+}
+
+func updateGroup(tx *gorm.DB, where map[string]interface{}, data model.Enterprise) (affectedRows int64, err error) {
+	tx = tx.Table(model.GetGroupTable())
+	for k, v := range where {
+		tx = tx.Where(k, v)
+	}
+	tx = tx.Updates(data)
+	affectedRows = tx.RowsAffected
+	err = tx.Error
 	return
 }

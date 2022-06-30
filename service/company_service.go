@@ -63,5 +63,17 @@ func Update(appID string, data model.EnterpriseMuttable) (rows int64, err error)
 }
 
 func GetByAppIDs(appIDs []string) (res []model.Enterprise, err error) {
-	return repository.GetEnterpriseByAppIDs(appIDs)
+	res, err = repository.GetEnterpriseByAppIDs(appIDs)
+	if err != nil || len(res) == 0 {
+		return
+	}
+	for k := range res {
+		if m := utils.DFSDistrict(&providers.DisrictDict, res[k].District); m != nil {
+			res[k].LabelDistrict = []string{m.Label}
+		}
+		if m := utils.DFSIndustry(&providers.IndustryDict, res[k].Industry); m != nil {
+			res[k].LabelIndustry = []string{m.Label}
+		}
+	}
+	return
 }

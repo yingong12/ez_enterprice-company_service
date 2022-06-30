@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 
 	"gorm.io/gorm"
@@ -66,6 +67,7 @@ func UpdateState(tx *gorm.DB, auditID, appID, comment string, state int) (rowCou
 		tx = tx.Update("comment", comment)
 	}
 	rowCount = tx.RowsAffected
+	log.Println(69, rowCount)
 	err = tx.Error
 	return
 }

@@ -20,4 +20,5 @@ type UpdateState struct {
 	AppID   string `json:"app_id"`
 	State   int    `json:"state"`   /*0-审核中 1-审核通过 2-审核不通过*/
 	Comment string `json:"comment"` /*管理员备注*/
+	AppType uint16 `json:"app_type"`
 }
