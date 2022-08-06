@@ -48,28 +48,76 @@ func Create(appID string, appType int8, formData string) (err error) {
 	return
 }
 
+//Search 根据企业机构名称，注册表等信息查询appID 再去audit表里查审核。
 func Search(appName, registrationNumber, appID string, stateArr []int, page, pageSize int) (res []model.Audit, total int64, err error) {
 	appIDs := []string{}
 	res = make([]model.Audit, 0)
-	//审核名称模糊查询
-	if appName != "" {
-		if appIDs, err = repository.GetAppIDsByNames(appName); err != nil {
-			return
-		}
-	}
+
 	//appid精确查询
 	if appID != "" {
 		appIDs = []string{appID}
+		goto final
 	}
-	//registration_number精确查询
-	if registrationNumber != "" {
-		appID, err = repository.GetAppIDsByRegistrationNumber(registrationNumber)
+	//审核名称模糊查询
+	if appName != "" {
+		//查企业
+		if appIDs, err = enterprise.GetAppIDsByNames(appName); err != nil {
+			return
+		}
+		//查机构
+		groupAppIDs := []string{}
+		groupAppIDs, err = func(name string) (appIDs []string, err error) {
+			res := []model.Enterprise{}
+			tx := providers.DBenterprise.Table(model.GetGroupTable())
+			tx.Select("app_id").Where("name like ?", "%"+name+"%").Find(&res)
+			for _, v := range res {
+				appIDs = append(appIDs, v.AppID)
+			}
+			err = tx.Error
+			return
+		}(appName)
 		if err != nil {
 			return
 		}
-		appIDs = []string{appID}
+		appIDs = append(appIDs, groupAppIDs...)
+		// 条件之间and连接
+		if len(appIDs) == 0 {
+			return
+		}
+	}
+	//registration_number精确查询
+	if registrationNumber != "" {
+		var en *model.Enterprise
+		en, err = enterprise.GetEnterpriseByKey("registration_number", registrationNumber)
+		if err != nil && err != gorm.ErrRecordNotFound {
+			return
+		}
+		if err != gorm.ErrRecordNotFound {
+			appIDs = []string{en.AppID}
+			//因为注册号是唯一的，所以企业找到了就不去机构找了
+			goto final
+		}
+		//查机构
+		var gpEn *model.Group
+		gpEn, err = func(registrationNumber string) (gpEn *model.Group, err error) {
+			gpEn = &model.Group{}
+			tx := providers.DBenterprise.Table(model.GetGroupTable())
+			tx.Select("app_id").Where("registration_number", registrationNumber).First(&gpEn)
+			err = tx.Error
+			return
+		}(registrationNumber)
+		if err != nil && err != gorm.ErrRecordNotFound {
+			return
+		}
+		if err != gorm.ErrRecordNotFound {
+			appIDs = append(appIDs, gpEn.AppID)
+		}
+		if len(appIDs) == 0 {
+			return
+		}
 	}
 	// 拿total
+final:
 	res, total, err = repository.Search(appIDs, stateArr, page, pageSize)
 	return
 

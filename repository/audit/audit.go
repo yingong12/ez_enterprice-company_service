@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"company_service/model"
 	"company_service/providers"
-	"company_service/repository"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -35,14 +34,14 @@ func Search(appIDs []string, stateArr []int, page, pageSize int) (res []model.Au
 	//单个和多个分开写sql
 	if len(appIDs) > 0 {
 		if len(appIDs) == 1 {
-			tx.Where("app_id = ?", appIDs[0])
+			tx = tx.Where("app_id = ?", appIDs[0])
 		}
 		if len(appIDs) > 1 {
-			tx.Where("app_id IN ?", appIDs)
+			tx = tx.Where("app_id IN ?", appIDs)
 		}
 	}
 	if len(stateArr) > 0 {
-		tx.Where("state in ?", stateArr)
+		tx = tx.Where("state in ?", stateArr)
 	}
 	tx.Count(&count)
 	if count == 0 {
@@ -69,32 +68,6 @@ func UpdateState(tx *gorm.DB, auditID, appID, comment string, state int) (rowCou
 	rowCount = tx.RowsAffected
 	log.Println(69, rowCount)
 	err = tx.Error
-	return
-}
-
-func GetAppIDsByNames(name string) (appIDs []string, err error) {
-	if name == "" {
-		return
-	}
-	res := []model.Enterprise{}
-	tx := providers.DBenterprise.Table(model.GetEnterpriseTable())
-	tx.Where("name like ?", "%"+name+"%").Find(&res)
-	for _, v := range res {
-		appIDs = append(appIDs, v.AppID)
-	}
-	err = tx.Error
-	return
-}
-
-func GetAppIDsByRegistrationNumber(registrationNumber string) (appID string, err error) {
-	if registrationNumber == "" {
-		return
-	}
-	en, err := repository.GetEnterpriseByKey("registration_number", registrationNumber)
-	if err != nil {
-		return
-	}
-	appID = en.AppID
 	return
 }
 

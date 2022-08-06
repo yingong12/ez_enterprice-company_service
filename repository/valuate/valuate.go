@@ -7,12 +7,12 @@ import (
 	"encoding/json"
 
 	"github.com/Shopify/sarama"
+	"gorm.io/gorm"
 )
 
-func Search(appID string, page, pageSize int) (res []model.Valuate, err error) {
+func Search(tx *gorm.DB, appID string, page, pageSize int) (res []model.Valuate, err error) {
 	res = make([]model.Valuate, 0)
-	tx := providers.DBenterprise.Table(model.GetValuateTable())
-	tx.
+	tx = tx.Table(model.GetValuateTable()).
 		Where("app_id", appID).
 		//TODO:B O端统一，先看估值成功的
 		Where("state", 1).
@@ -22,7 +22,15 @@ func Search(appID string, page, pageSize int) (res []model.Valuate, err error) {
 	err = tx.Error
 	return
 }
-
+func Total(tx *gorm.DB, appID string, page, pageSize int) (total int64, err error) {
+	tx = tx.Table(model.GetValuateTable()).
+		Where("app_id", appID).
+		//TODO:B O端统一，先看估值成功的
+		Where("state", 1).
+		Count(&total)
+	err = tx.Error
+	return
+}
 func Create(data model.ValuateMuttable, valID string) (err error) {
 	tx := providers.DBenterprise.Table(model.GetValuateTable())
 	en := model.Valuate{}

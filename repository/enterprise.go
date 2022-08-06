@@ -70,6 +70,16 @@ func GetEnterpriseByKey(key string, val interface{}) (res *model.Enterprise, err
 	err = tx.Error
 	return
 }
+func GetAppIDsByNames(name string) (appIDs []string, err error) {
+	res := []model.Enterprise{}
+	tx := providers.DBenterprise.Table(model.GetEnterpriseTable())
+	tx.Where("name like ?", "%"+name+"%").Find(&res)
+	for _, v := range res {
+		appIDs = append(appIDs, v.AppID)
+	}
+	err = tx.Error
+	return
+}
 func Total(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort) (total int64, err error) {
 	for _, v := range textFilters {
 		p := utils.ParseFilter(v.Type)

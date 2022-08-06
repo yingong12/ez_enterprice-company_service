@@ -101,6 +101,14 @@ func ChilrenInfo(appID string, page, pageSize int) (res []model.Enterprise, tota
 	if err != nil {
 		return
 	}
+	for k := range res {
+		if m := utils.DFSDistrict(&providers.DisrictDict, res[k].District); m != nil {
+			res[k].LabelDistrict = []string{m.Label}
+		}
+		if m := utils.DFSIndustry(&providers.IndustryDict, res[k].Industry); m != nil {
+			res[k].LabelIndustry = []string{m.Label}
+		}
+	}
 	total, err = getChildrenTotal(appID)
 	return
 }

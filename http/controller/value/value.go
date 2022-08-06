@@ -46,7 +46,7 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	if err = BindQuery(ctx, &req); err != nil {
 		return
 	}
-	list, err := service.Search(req.AppID, req.Page, req.PageSize)
+	list, total, err := service.Search(req.AppID, req.Page, req.PageSize)
 	if err != nil {
 		res.Code = buz_code.CODE_SERVER_ERROR
 		res.Msg = "server error"
@@ -55,7 +55,10 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	if list == nil {
 		list = []model.Valuate{}
 	}
-	res.Data = list
+	res.Data = map[string]interface{}{
+		"list":  list,
+		"total": total,
+	}
 	return
 }
 

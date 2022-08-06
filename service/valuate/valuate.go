@@ -82,10 +82,19 @@ func getStaticFileAsString(taskID string) (res string, err error) {
 	log.Println(res)
 	return
 }
-func Search(appID string, page, pageSize int) (res []model.Valuate, err error) {
+func Search(appID string, page, pageSize int) (res []model.Valuate, total int64, err error) {
 	//search
-	list, err := repository.Search(appID, page, pageSize)
+	tx := providers.DBenterprise.Begin()
+	defer func() {
+		//readonly 也commit
+		tx.Commit()
+	}()
+	list, err := repository.Search(tx, appID, page, pageSize)
 	if err != nil || len(list) == 0 {
+		return
+	}
+	total, err = repository.Total(tx, appID, page, pageSize)
+	if err != nil || total == 0 {
 		return
 	}
 	wg := sync.WaitGroup{}
@@ -107,6 +116,7 @@ func Search(appID string, page, pageSize int) (res []model.Valuate, err error) {
 		}(list[i].ValuateID, i)
 	}
 	wg.Wait()
+
 	res = list
 	return
 }
