@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-//审核中
+// 审核中
 const STATE_AUDITING int8 = 0
 
 func Create(appID string, appType int8, formData string) (err error) {
@@ -24,6 +24,7 @@ func Create(appID string, appType int8, formData string) (err error) {
 		"app_id": appID,
 	}
 	//TODO: 这里用事务
+	//更新企业，机构表
 	if appType == 1 {
 		//机构
 		muData := model.GroupMuttable{}
@@ -44,11 +45,12 @@ func Create(appID string, appType int8, formData string) (err error) {
 	if err != nil {
 		return
 	}
+	//更新audit表
 	repository.Create(auditID, appID, appType, formData, now)
 	return
 }
 
-//Search 根据企业机构名称，注册表等信息查询appID 再去audit表里查审核。
+// Search 根据企业机构名称，注册表等信息查询appID 再去audit表里查审核。
 func Search(appName, registrationNumber, appID string, stateArr []int, page, pageSize int) (res []model.Audit, total int64, err error) {
 	appIDs := []string{}
 	res = make([]model.Audit, 0)
@@ -85,6 +87,7 @@ func Search(appName, registrationNumber, appID string, stateArr []int, page, pag
 			return
 		}
 	}
+
 	//registration_number精确查询
 	if registrationNumber != "" {
 		var en *model.Enterprise

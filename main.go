@@ -15,6 +15,7 @@ func main() {
 		3.启动webserver。
 		4.日志线程。
 	*/
+	//
 	if err := loadConfs(); err != nil {
 		log.Fatal("system crashed while loading confs ", err)
 	}

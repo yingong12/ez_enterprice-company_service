@@ -48,7 +48,6 @@ func Create(uid string, pid string, data model.EnterpriseMuttable) (buzCode buz_
 		return
 	}()
 	//能新建
-	//TODO:占位符
 	appID := utils.GenerateAppID()
 	err = repository.Create(appID, uid, pid, data)
 	return

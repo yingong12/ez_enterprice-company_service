@@ -20,7 +20,7 @@ func loadRouter() (router *gin.Engine) {
 	router.Use(middleware.RequestLogger())
 	router.Use(middleware.ControllerErrorLogger())
 	//routes
-	router.POST("health", controller.Health)
+	router.GET("health", controller.Health)
 	//swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler)) // register swagger
 	// 企业模块

@@ -13,7 +13,6 @@ import (
 //
 func Search(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, err error) {
 	tx = tx.Where("state <> ?", model.ENTERPRISE_STATE_DELETED)
-	//TODO:需支持全文搜索
 	for _, v := range textFilters {
 		p := utils.ParseFilter(v.Type)
 		for _, v1 := range v.Values {

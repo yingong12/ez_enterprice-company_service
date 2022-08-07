@@ -138,7 +138,6 @@ func Create(ctx *gin.Context) (res controller.STDResponse, err error) {
 	return
 }
 
-//TODO:
 func Update(ctx *gin.Context) (res controller.STDResponse, err error) {
 	req := group.Update{}
 	appID := ctx.Param("app_id")

@@ -14,7 +14,6 @@ func Search(tx *gorm.DB, appID string, page, pageSize int) (res []model.Valuate,
 	res = make([]model.Valuate, 0)
 	tx = tx.Table(model.GetValuateTable()).
 		Where("app_id", appID).
-		//TODO:B O端统一，先看估值成功的
 		Where("state", 1).
 		Offset((page - 1) * pageSize).
 		Limit(pageSize).
@@ -25,7 +24,6 @@ func Search(tx *gorm.DB, appID string, page, pageSize int) (res []model.Valuate,
 func Total(tx *gorm.DB, appID string, page, pageSize int) (total int64, err error) {
 	tx = tx.Table(model.GetValuateTable()).
 		Where("app_id", appID).
-		//TODO:B O端统一，先看估值成功的
 		Where("state", 1).
 		Count(&total)
 	err = tx.Error
