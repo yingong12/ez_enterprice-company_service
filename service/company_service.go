@@ -9,7 +9,7 @@ import (
 	"company_service/utils"
 )
 
-//新用户绑定app
+// 新用户绑定app
 func BindPlaceHolder(uid string, appType int) (appID string, err error) {
 	// if appType == 1 {
 	// 	table = model.GetGroupTable()
@@ -20,7 +20,7 @@ func BindPlaceHolder(uid string, appType int) (appID string, err error) {
 	return
 }
 func Search(rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, total int64, err error) {
-	tx := providers.DBenterprise.Begin().Table(model.GetEnterpriseTable())
+	tx := providers.DBenterprise.Begin()
 	defer tx.Commit()
 	res, err = repository.Search(tx, rangeFilters, textFilters, sort, page, pageSize)
 	if err != nil {

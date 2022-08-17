@@ -4,18 +4,18 @@ import "company_service/model"
 
 // map
 var filterMap = []string{
-	",district",
-	",register_capital",
-	",estimate_value",
-	",industry",
-	",app_id",
-	",name",
-	",registration_number",
+	"district",
+	"register_capital",
+	"estimate_value",
+	"industry",
+	"app_id",
+	"name",
+	"registration_number",
 }
 var sortMap = []string{
-	",register_capital",
-	",estimate_value",
-	",name",
+	"register_capital",
+	"estimate_value",
+	"name",
 }
 
 func ParseFilter(k int) string {
@@ -26,8 +26,8 @@ func ParseSortColumn(k int) string {
 	return sortMap[k]
 }
 
-//选择题长度
-//千万别乱动
+// 选择题长度
+// 千万别乱动
 var ValChoiceToLength = []int{
 	4,
 	6,
@@ -56,7 +56,7 @@ var ValChoiceToLength = []int{
 	3,
 }
 
-//单选题字典
+// 单选题字典
 var ValKey2IndexChoice = []string{
 	"competitive_landscape",
 	"barrier_industry",
@@ -85,7 +85,7 @@ var ValKey2IndexChoice = []string{
 	"exit_strategy",
 }
 
-//企业估值数据字典
+// 企业估值数据字典
 var ValKey2IndexData = []string{
 	"year",
 	"money_funds",
@@ -130,7 +130,7 @@ var ValKey2IndexData = []string{
 	"securities",
 }
 
-//找出该节点和所有儿子
+// 找出该节点和所有儿子
 func DFSDistrict(root *model.District, target string) *model.District {
 	if root == nil {
 		return nil

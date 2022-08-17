@@ -10,9 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
-//
 func Search(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort, page, pageSize int) (res []model.Enterprise, err error) {
-	tx = tx.Where("state <> ?", model.ENTERPRISE_STATE_DELETED)
+	tx = tx.Table(model.GetEnterpriseTable()).Where("state <> ?", model.ENTERPRISE_STATE_DELETED)
 	for _, v := range textFilters {
 		p := utils.ParseFilter(v.Type)
 		for _, v1 := range v.Values {
@@ -27,7 +26,7 @@ func Search(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []reque
 		if v.Gte >= 0 {
 			tx.Where(p+" >= ? ", v.Gte)
 		}
-		if v.Gte <= 0 {
+		if v.Lte >= 0 {
 			tx.Where(p+" <= ? ", v.Lte)
 		}
 	}
@@ -44,11 +43,11 @@ func Search(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []reque
 		}
 		//去掉最后一个AND
 		orderClause = orderClause[:len(orderClause)-1]
-		tx.Order(orderClause)
+		tx = tx.Order(orderClause)
 	}
 	//page>0启用分页
 	if page > 0 {
-		tx.Offset((page - 1) * pageSize).Limit(pageSize)
+		tx = tx.Offset((page - 1) * pageSize).Limit(pageSize)
 	}
 	tx.Find(&res)
 	err = tx.Error
@@ -80,6 +79,7 @@ func GetAppIDsByNames(name string) (appIDs []string, err error) {
 	return
 }
 func Total(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []request.TextFilter, sort []request.Sort) (total int64, err error) {
+	tx = tx.Table(model.GetEnterpriseTable()).Where("state <> ?", model.ENTERPRISE_STATE_DELETED)
 	for _, v := range textFilters {
 		p := utils.ParseFilter(v.Type)
 		for _, v1 := range v.Values {
@@ -94,7 +94,7 @@ func Total(tx *gorm.DB, rangeFilters []request.RangeFilter, textFilters []reques
 		if v.Gte >= 0 {
 			tx.Where(p+" >= ? ", v.Gte)
 		}
-		if v.Gte <= 0 {
+		if v.Lte >= 0 {
 			tx.Where(p+" <= ? ", v.Lte)
 		}
 	}

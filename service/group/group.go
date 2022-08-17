@@ -32,10 +32,10 @@ func Update(appID string, data model.GroupMuttable, state int8) (rf int64, err e
 	return
 }
 
-func Search(appID string, name string, sort uint8, page int, pageSize int) (res []model.Group, total int64, err error) {
+func Search(registrationNumber string, name string, sort uint8, page int, pageSize int) (res []model.Group, total int64, err error) {
 	tx := providers.DBenterprise.Table(model.GetGroupTable())
-	if appID != "" {
-		tx = tx.Where("app_id", appID)
+	if registrationNumber != "" {
+		tx = tx.Where("registration_number", registrationNumber)
 	}
 	if len(name) > 0 {
 		tx = tx.Where("name like ?", "%"+name+"%")
@@ -60,13 +60,13 @@ func Search(appID string, name string, sort uint8, page int, pageSize int) (res 
 	if err != nil {
 		return
 	}
-	total, err = getTotal(appID, name, sort)
+	total, err = getTotal(registrationNumber, name, sort)
 	return
 }
-func getTotal(appID, name string, sort uint8) (total int64, err error) {
+func getTotal(registrationNumber, name string, sort uint8) (total int64, err error) {
 	tx := providers.DBenterprise.Table(model.GetGroupTable())
-	if appID != "" {
-		tx.Where("app_id", appID)
+	if registrationNumber != "" {
+		tx.Where("registration_number", registrationNumber)
 	}
 	if len(name) > 0 {
 		tx.Where("name like ?", "%"+name+"%")
@@ -87,7 +87,6 @@ func getTotal(appID, name string, sort uint8) (total int64, err error) {
 	return
 }
 
-//
 func ChilrenInfo(appID string, page, pageSize int) (res []model.Enterprise, total int64, err error) {
 	tx := providers.DBenterprise.Table(model.GetEnterpriseTable())
 	tx.Where("parent_id", appID)

@@ -85,7 +85,7 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	if err != nil {
 		return
 	}
-	list, total, err := service.Search(req.AppID, req.Name, req.Sort, req.Page, req.PageSize)
+	list, total, err := service.Search(req.RegistrationNumber, req.Name, req.Sort, req.Page, req.PageSize)
 	for k := range list {
 		if d := utils.DFSDistrict(&providers.DisrictDict, list[k].District); d != nil {
 			list[k].LabelDistrict = []string{d.Label}
@@ -103,7 +103,7 @@ func Search(ctx *gin.Context) (res controller.STDResponse, err error) {
 	return
 }
 
-//批量查询儿子企业信息
+// 批量查询儿子企业信息
 func GetChildrenMulti(ctx *gin.Context) (res controller.STDResponse, err error) {
 	//
 	req := group.GetChildrenMulti{}

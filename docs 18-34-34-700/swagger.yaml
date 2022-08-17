@@ -1,0 +1,162 @@
+definitions:
+  model.Enterprise:
+    properties:
+      app_id:
+        type: string
+      business_scope:
+        type: string
+      company_type:
+        type: integer
+      created_at:
+        description: 返回给业务侧
+        type: string
+      district:
+        type: string
+      estimate_value:
+        type: integer
+      industry:
+        type: string
+      introduction:
+        type: string
+      label_district:
+        type: string
+      label_industry:
+        type: string
+      legal_representative:
+        type: string
+      legal_representative_id_img:
+        type: string
+      license_img:
+        type: string
+      name:
+        type: string
+      parent_id:
+        type: string
+      register_capital:
+        type: integer
+      registration_address:
+        type: string
+      registration_number:
+        type: string
+      shar_holders_json:
+        type: string
+      share_holder_info:
+        type: string
+      stage:
+        type: integer
+      state:
+        description: 审核状态
+        type: integer
+      udated_at:
+        type: string
+      uid:
+        type: string
+    type: object
+  model.Valuate:
+    properties:
+      app_id:
+        type: string
+      created_at:
+        description: 返回给业务侧
+        type: string
+      form_data:
+        type: string
+      requested_at:
+        type: string
+      state:
+        type: integer
+      udated_at:
+        type: string
+      valuate_id:
+        type: string
+    type: object
+  request.RangeFilter:
+    properties:
+      gte:
+        description: '>='
+        type: integer
+      lte:
+        description: <=
+        type: integer
+      type:
+        description: 0-注册资本 1-估值
+        type: integer
+    type: object
+  request.Sort:
+    properties:
+      column:
+        description: 0-注册资本 1-估值结果 2-名字
+        type: integer
+      type:
+        description: 0-asc 1-desc
+        type: integer
+    type: object
+  request.TextFilter:
+    properties:
+      type:
+        description: 0-行业代码
+        type: integer
+      values:
+        items:
+          type: string
+        type: array
+    type: object
+  response.Search:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/model.Enterprise'
+        type: array
+      total:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /enterprise/search:
+    post:
+      description: 企业搜索
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Search'
+      summary: 企业搜索
+      tags:
+      - 常规接口
+  /valuate/search:
+    get:
+      description: 估值搜索
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 分页大小
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Valuate'
+            type: array
+      summary: 估值搜索
+      tags:
+      - 估值
+swagger: "2.0"
